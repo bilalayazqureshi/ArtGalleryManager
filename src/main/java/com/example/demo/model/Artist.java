@@ -6,7 +6,8 @@ public class Artist {
 	private String name;
 	private String nationality;
 
-	public Artist(String name, String nationality) {
+	public Artist(Long id,String name, String nationality) {
+		this.id = id;
 		this.name = name;
 		this.nationality = nationality;
 	}

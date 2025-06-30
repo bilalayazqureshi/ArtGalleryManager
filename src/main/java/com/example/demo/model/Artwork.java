@@ -8,7 +8,8 @@ public class Artwork {
 	private int yearCreated;
 	private Artist artist;
 
-	public Artwork(String title, String medium, int yearCreated, Artist artist) {
+	public Artwork(Long id,String title, String medium, int yearCreated, Artist artist) {
+		this.id = id;
 		this.title = title;
 		this.medium = medium;
 		this.yearCreated = yearCreated;
