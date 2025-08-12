@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -11,40 +12,34 @@ import com.example.demo.repository.ArtistRepository;
 public class ArtistService {
 
 	private ArtistRepository artistRepository;
-	
-	
+
 	public ArtistService(ArtistRepository artistRepository) {
 		this.artistRepository = artistRepository;
 	}
 
-
-	public Artist getArtistById(long l) {
-		// TODO Auto-generated method stub
-		return null;
+	public Artist getArtistById(long id) {
+		Optional<Artist> optionalArtist = artistRepository.findById(id);
+		return optionalArtist.orElse(null);
 	}
-
 
 	public Artist insertNewArtist(Artist artist) {
-		// TODO Auto-generated method stub
-		return null;
+		return artistRepository.save(artist);
 	}
 
-
-	public Artist updateArtistById(long l, Artist updatedArtist) {
-		// TODO Auto-generated method stub
+	public Artist updateArtistById(long id, Artist updatedArtist) {
+		Optional<Artist> existingArtist = artistRepository.findById(id);
+		if (existingArtist.isPresent()) {
+			return artistRepository.save(updatedArtist);
+		}
 		return null;
 	}
-
 
 	public void deleteArtistById(long id) {
-		// TODO Auto-generated method stub
-		
+		artistRepository.deleteById(id);
 	}
-
 
 	public List<Artist> getAllArtists() {
-		// TODO Auto-generated method stub
-		return null;
+		return artistRepository.findAll();
 	}
-	
+
 }

@@ -35,7 +35,7 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testGetArtworkById() {
-		Artist artist = new Artist(null,"Vincent van Gogh", "Dutch");
+		Artist artist = new Artist(null,"Leonardo da Vinci", "Italian");
 		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(artwork));
 

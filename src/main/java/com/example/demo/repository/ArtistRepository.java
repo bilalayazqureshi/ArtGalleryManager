@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -9,26 +10,22 @@ import com.example.demo.model.Artist;
 @Repository
 public class ArtistRepository {
 
-	public Optional<Artist> findById(long l) {
-		// TODO Auto-generated method stub
-		return null;
+	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
+
+	public Optional<Artist> findById(long id) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
 	public Artist save(Artist artist) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
 	public void deleteById(long id) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public Object findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Artist> findAll() {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	
-	
 }
