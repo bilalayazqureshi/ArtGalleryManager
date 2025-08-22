@@ -1,17 +1,26 @@
 package com.example.demo.controllers;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Artwork;
+import com.example.demo.service.ArtworkService;
 
 @RestController
+@RequestMapping("/api/artworks")
 public class ArtworkRestController {
-	@GetMapping("/api/artworks")
+
+	private final ArtworkService artworkService;
+
+	public ArtworkRestController(ArtworkService artworkService) {
+		this.artworkService = artworkService;
+	}
+
+	@GetMapping
 	public List<Artwork> allArtworks() {
-		return Collections.emptyList();
+		return artworkService.getAllArtworks();
 	}
 }

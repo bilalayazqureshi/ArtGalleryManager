@@ -13,14 +13,14 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = ArtistRestController.class)
 class ArtistRestControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
+	@Autowired
+	private MockMvc mvc;
 
-    @Test
-    void testAllArtistsEmpty() throws Exception {
-        mvc.perform(get("/api/artists")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json("[]"));
-    }
+	@Test
+	void testAllArtistsNotEmpty() throws Exception {
+		String expectedJson = "[{\"id\":1,\"name\":\"Pablo Picasso\",\"nationality\":\"Spanish\"}]";
+
+		mvc.perform(get("/api/artists").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().json(expectedJson));
+	}
 }
