@@ -1,12 +1,16 @@
 package com.example.demo.controllers;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.model.Artist;
 import com.example.demo.service.ArtistService;
@@ -28,35 +32,44 @@ public class ArtistRestControllerTest {
 	private ArtistService artistService;
 
 	@Test
-	public void testAllArtistsNotEmpty() throws Exception {
-		Artist a1 = new Artist(1L, "Pablo Picasso", "Spanish");
-		Artist a2 = new Artist(2L, "Vincent van Gogh", "Dutch");
+	public void testCreateArtist() throws Exception {
+		when(artistService.insertNewArtist(any(Artist.class))).thenReturn(new Artist(3L, "Bob Brown", "American"));
 
-		when(artistService.getAllArtists()).thenReturn(List.of(a1, a2));
+		String newArtistJson = """
+				{"name":"Bob Brown","nationality":"American"}
+				""";
 
-		mvc.perform(get("/api/artists").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(content().json("""
-							[
-								{"id":1,"name":"Pablo Picasso","nationality":"Spanish"},
-								{"id":2,"name":"Vincent van Gogh","nationality":"Dutch"}
-							]
-						"""));
+		this.mvc.perform(post("/api/artists/new").contentType(MediaType.APPLICATION_JSON).content(newArtistJson))
+				.andExpect(jsonPath("$.id", is(3))).andExpect(jsonPath("$.name", is("Bob Brown")))
+				.andExpect(jsonPath("$.nationality", is("American")));
 	}
 
 	@Test
-	public void testOneArtistByIdWithExistingArtist() throws Exception {
-		when(artistService.getArtistById(anyLong())).thenReturn(new Artist(1L, "Pablo Picasso", "Spanish"));
+	public void testUpdateArtistExisting() throws Exception {
+		when(artistService.updateArtistById(anyLong(), any(Artist.class)))
+				.thenReturn(new Artist(1L, "John Doe Jr.", "Canadian"));
 
-		mvc.perform(get("/api/artists/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.name", is("Pablo Picasso")))
-				.andExpect(jsonPath("$.nationality", is("Spanish")));
+		String updateJson = "{\"name\":\"John Doe Jr.\",\"nationality\":\"Canadian\"}";
+
+		this.mvc.perform(put("/api/artists/1").contentType(MediaType.APPLICATION_JSON).content(updateJson))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)))
+				.andExpect(jsonPath("$.name", is("John Doe Jr."))).andExpect(jsonPath("$.nationality", is("Canadian")));
 	}
 
 	@Test
-	public void testOneArtistByIdWithNotFoundArtist() throws Exception {
-		when(artistService.getArtistById(anyLong())).thenReturn(null);
+	public void testUpdateArtistNotFound() throws Exception {
+		when(artistService.updateArtistById(anyLong(), any(Artist.class))).thenReturn(null);
 
-		mvc.perform(get("/api/artists/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(content().string(""));
+		String updateJson = "{\"name\":\"Nobody\",\"nationality\":\"None\"}";
+
+		this.mvc.perform(put("/api/artists/99").contentType(MediaType.APPLICATION_JSON).content(updateJson))
+				.andExpect(status().isOk()).andExpect(content().string(""));
+	}
+
+	@Test
+	public void testDeleteArtist() throws Exception {
+		doNothing().when(artistService).deleteArtistById(anyLong());
+
+		this.mvc.perform(delete("/api/artists/1")).andExpect(status().isOk()).andExpect(content().string(""));
 	}
 }
