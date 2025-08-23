@@ -1,11 +1,10 @@
 package com.example.demo.controllers;
 
 import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.Artwork;
 import com.example.demo.service.ArtworkService;
 
@@ -13,11 +12,8 @@ import com.example.demo.service.ArtworkService;
 @RequestMapping("/api/artworks")
 public class ArtworkRestController {
 
-	private final ArtworkService artworkService;
-
-	public ArtworkRestController(ArtworkService artworkService) {
-		this.artworkService = artworkService;
-	}
+	@Autowired
+	private ArtworkService artworkService;
 
 	@GetMapping
 	public List<Artwork> allArtworks() {
