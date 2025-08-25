@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Artist;
@@ -22,12 +25,42 @@ public class ArtistWebController {
 	private static final String ARTIST_ATTRIBUTE = "artist";
 	private static final String ARTISTS_ATTRIBUTE = "artists";
 
-	// --- LIST / READ ALL ---
 	@GetMapping
 	public String listArtists(Model model) {
 		List<Artist> allArtists = artistService.getAllArtists();
 		model.addAttribute(ARTISTS_ATTRIBUTE, allArtists);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allArtists.isEmpty() ? "No artist" : "");
 		return "artist";
+	}
+
+	@GetMapping("/edit/{id}")
+	public String editArtist(@PathVariable long id, Model model) {
+		Artist artist = artistService.getArtistById(id);
+		model.addAttribute(ARTIST_ATTRIBUTE, artist);
+		model.addAttribute(MESSAGE_ATTRIBUTE, artist == null ? "No artist found with id: " + id : "");
+		return "artist";
+	}
+
+	@GetMapping("/new")
+	public String newArtist(Model model) {
+		model.addAttribute(ARTIST_ATTRIBUTE, new Artist());
+		model.addAttribute(MESSAGE_ATTRIBUTE, "");
+		return "artist";
+	}
+
+	@PostMapping("/save")
+	public String saveArtist(Artist artist) {
+		if (artist.getId() == null) {
+			artistService.insertNewArtist(artist);
+		} else {
+			artistService.updateArtistById(artist.getId(), artist);
+		}
+		return "redirect:/artists";
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public String deleteArtist(@PathVariable long id) {
+		artistService.deleteArtistById(id);
+		return "redirect:/artists";
 	}
 }
