@@ -1,11 +1,29 @@
 package com.example.demo.controllers;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.List;
+
+import com.example.demo.model.Artist;
+import com.example.demo.services.ArtistService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = ArtistWebController.class)
@@ -14,9 +32,83 @@ class ArtistWebControllerTest {
 	@Autowired
 	private MockMvc mvc;
 
+	@MockBean
+	private ArtistService artistService;
+
 	@Test
-	public void testStatus200() throws Exception {
-		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
+	void testStatus200_ListView() throws Exception {
+		mvc.perform(get("/artists")).andExpect(status().is2xxSuccessful());
 	}
 
+	@Test
+	void testReturnArtistView() throws Exception {
+		ModelAndViewAssert.assertViewName(mvc.perform(get("/artists")).andReturn().getModelAndView(), "artist");
+	}
+
+	@Test
+	void test_ListView_ShowsArtists() throws Exception {
+		List<Artist> artists = asList(new Artist(1L, "Leonardo", "Italian"));
+		when(artistService.getAllArtists()).thenReturn(artists);
+
+		mvc.perform(get("/artists")).andExpect(view().name("artist")).andExpect(model().attribute("artists", artists))
+				.andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	void test_ListView_ShowsMessageWhenNoArtists() throws Exception {
+		when(artistService.getAllArtists()).thenReturn(emptyList());
+
+		mvc.perform(get("/artists")).andExpect(view().name("artist"))
+				.andExpect(model().attribute("artists", emptyList()))
+				.andExpect(model().attribute("message", "No artist"));
+	}
+
+	@Test
+	void test_EditArtist_WhenArtistIsFound() throws Exception {
+		Artist artist = new Artist(1L, "Bob", "Dutch");
+		when(artistService.getArtistById(1L)).thenReturn(artist);
+
+		mvc.perform(get("/artists/edit/1")).andExpect(view().name("artist"))
+				.andExpect(model().attribute("artist", artist)).andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	void test_EditArtist_WhenArtistIsNotFound() throws Exception {
+		when(artistService.getArtistById(1L)).thenReturn(null);
+
+		mvc.perform(get("/artists/edit/1")).andExpect(view().name("artist"))
+				.andExpect(model().attribute("artist", nullValue()))
+				.andExpect(model().attribute("message", "No artist found with id: 1"));
+	}
+
+	@Test
+	void test_EditNewArtist() throws Exception {
+		mvc.perform(get("/artists/new")).andExpect(view().name("artist"))
+				.andExpect(model().attribute("artist", new Artist())).andExpect(model().attribute("message", ""));
+		verifyNoMoreInteractions(artistService);
+	}
+
+	@Test
+	void test_PostArtistWithoutId_ShouldInsertNewArtist() throws Exception {
+		mvc.perform(post("/artists/save").param("name", "Charlie").param("nationality", "French"))
+				.andExpect(view().name("redirect:/artists"));
+
+		verify(artistService).insertNewArtist(new Artist(null, "Charlie", "French"));
+	}
+
+	@Test
+	void test_PostArtistWithId_ShouldUpdateExistingArtist() throws Exception {
+		mvc.perform(post("/artists/save").param("id", "2").param("name", "Charlie").param("nationality", "French"))
+				.andExpect(view().name("redirect:/artists"));
+
+		verify(artistService).updateArtistById(2L, new Artist(2L, "Charlie", "French"));
+	}
+
+	@Test
+	void test_DeleteArtist() throws Exception {
+		mvc.perform(delete("/artists/delete/3")).andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/artists"));
+
+		verify(artistService).deleteArtistById(3L);
+	}
 }

@@ -8,12 +8,22 @@ public class Artwork {
 	private int yearCreated;
 	private Artist artist;
 
-	public Artwork(Long id,String title, String medium, int yearCreated, Artist artist) {
+	public Artwork(Long id, String title, String medium, int yearCreated, Artist artist) {
 		this.id = id;
 		this.title = title;
 		this.medium = medium;
 		this.yearCreated = yearCreated;
 		this.artist = artist;
+	}
+
+	public Artwork(Long id, String title, String medium, int yearCreated) {
+		this.id = id;
+		this.title = title;
+		this.medium = medium;
+		this.yearCreated = yearCreated;
+	}
+
+	public Artwork() {
 	}
 
 	public Long getId() {
