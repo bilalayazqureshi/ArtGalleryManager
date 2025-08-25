@@ -11,6 +11,10 @@ public class ArtworkService {
 
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
 
+	public List<Artwork> getAllArtworks() {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
 	public Artwork getArtworkById(long id) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
@@ -24,10 +28,6 @@ public class ArtworkService {
 	}
 
 	public void deleteArtworkById(long id) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-	}
-
-	public List<Artwork> getAllArtworks() {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 }

@@ -3,12 +3,9 @@ package com.example.demo.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,7 +27,7 @@ import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = ArtistWebController.class)
-class ArtistWebControllerTest {
+public class ArtistWebControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -87,10 +84,7 @@ class ArtistWebControllerTest {
 	@Test
 	void test_EditNewArtist() throws Exception {
 		mvc.perform(get("/artists/new")).andExpect(view().name("artist"))
-				.andExpect(model().attribute("artist", hasProperty("id", nullValue())))
-				.andExpect(model().attribute("artist", hasProperty("name", nullValue())))
-				.andExpect(model().attribute("artist", hasProperty("nationality", nullValue())))
-				.andExpect(model().attribute("message", ""));
+				.andExpect(model().attribute("artist", new Artist())).andExpect(model().attribute("message", ""));
 		verifyNoMoreInteractions(artistService);
 	}
 
@@ -99,7 +93,7 @@ class ArtistWebControllerTest {
 		mvc.perform(post("/artists/save").param("name", "Charlie").param("nationality", "French"))
 				.andExpect(view().name("redirect:/artists"));
 
-		verify(artistService).insertNewArtist(refEq(new Artist(null, "Charlie", "French")));
+		verify(artistService).insertNewArtist(new Artist(null, "Charlie", "French"));
 	}
 
 	@Test
@@ -107,7 +101,7 @@ class ArtistWebControllerTest {
 		mvc.perform(post("/artists/save").param("id", "2").param("name", "Charlie").param("nationality", "French"))
 				.andExpect(view().name("redirect:/artists"));
 
-		verify(artistService).updateArtistById(eq(2L), refEq(new Artist(2L, "Charlie", "French")));
+		verify(artistService).updateArtistById(2L, new Artist(2L, "Charlie", "French"));
 	}
 
 	@Test

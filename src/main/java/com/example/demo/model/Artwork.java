@@ -8,15 +8,6 @@ public class Artwork {
 	private String title;
 	private String medium;
 	private int yearCreated;
-	private Artist artist;
-
-	public Artwork(Long id, String title, String medium, int yearCreated, Artist artist) {
-		this.id = id;
-		this.title = title;
-		this.medium = medium;
-		this.yearCreated = yearCreated;
-		this.artist = artist;
-	}
 
 	public Artwork(Long id, String title, String medium, int yearCreated) {
 		this.id = id;
@@ -26,62 +17,61 @@ public class Artwork {
 	}
 
 	public Artwork() {
+		// Default constructor
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public String getMedium() {
 		return medium;
 	}
 
-	public void setMedium(String medium) {
-		this.medium = medium;
-	}
-
 	public int getYearCreated() {
 		return yearCreated;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setMedium(String medium) {
+		this.medium = medium;
 	}
 
 	public void setYearCreated(int yearCreated) {
 		this.yearCreated = yearCreated;
 	}
 
-	public Artist getArtist() {
-		return artist;
-	}
-
-	public void setArtist(Artist artist) {
-		this.artist = artist;
-	}
-
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof Artwork))
-			return false;
-		Artwork artwork = (Artwork) o;
-		return yearCreated == artwork.yearCreated && Objects.equals(id, artwork.id)
-				&& Objects.equals(title, artwork.title) && Objects.equals(medium, artwork.medium)
-				&& Objects.equals(artist, artwork.artist);
+	public String toString() {
+		return "Artwork [id=" + id + ", title=" + title + ", medium=" + medium + ", yearCreated=" + yearCreated + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, title, medium, yearCreated, artist);
+		return Objects.hash(id, title, medium, yearCreated);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		Artwork other = (Artwork) obj;
+		return yearCreated == other.yearCreated &&
+			   Objects.equals(id, other.id) &&
+			   Objects.equals(title, other.title) &&
+			   Objects.equals(medium, other.medium);
 	}
 }
