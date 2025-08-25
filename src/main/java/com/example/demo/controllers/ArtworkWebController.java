@@ -5,11 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Artwork;
 import com.example.demo.services.ArtworkService;
@@ -37,9 +33,8 @@ public class ArtworkWebController {
 	public String editArtwork(@PathVariable long id, Model model) {
 		Artwork artwork = artworkService.getArtworkById(id);
 		model.addAttribute(ARTWORK_ATTRIBUTE, artwork);
-		model.addAttribute(MESSAGE_ATTRIBUTE,
-				artwork == null ? "No artwork found with id: " + id : "");
-		return "artwork";
+		model.addAttribute(MESSAGE_ATTRIBUTE, artwork == null ? "No artwork found with id: " + id : "");
+		return "edit_artwork";
 	}
 
 	@GetMapping("/new")

@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -11,8 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static java.util.Collections.emptyList;
-import static java.util.Arrays.asList;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_ListView_ShowsArtworks() throws Exception {
-		List<Artwork> artworks = asList(new Artwork(1L, "Mona Lisa", "Oil", 1503));
+		List<Artwork> artworks = asList(new Artwork(1L, "Guernica", "Oil", 1937));
 		when(artworkService.getAllArtworks()).thenReturn(artworks);
 
 		mvc.perform(get("/artworks")).andExpect(view().name("artwork"))
@@ -65,10 +65,10 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_EditArtwork_WhenFound() throws Exception {
-		Artwork art = new Artwork(2L, "Starry Night", "Oil", 1889);
+		Artwork art = new Artwork(2L, "The Kiss", "Oil", 1907);
 		when(artworkService.getArtworkById(2L)).thenReturn(art);
 
-		mvc.perform(get("/artworks/edit/2")).andExpect(view().name("artwork"))
+		mvc.perform(get("/artworks/edit/2")).andExpect(view().name("edit_artwork"))
 				.andExpect(model().attribute("artwork", art)).andExpect(model().attribute("message", ""));
 	}
 
@@ -76,7 +76,7 @@ class ArtworkWebControllerTest {
 	void test_EditArtwork_WhenNotFound() throws Exception {
 		when(artworkService.getArtworkById(3L)).thenReturn(null);
 
-		mvc.perform(get("/artworks/edit/3")).andExpect(view().name("artwork"))
+		mvc.perform(get("/artworks/edit/3")).andExpect(view().name("edit_artwork"))
 				.andExpect(model().attribute("artwork", nullValue()))
 				.andExpect(model().attribute("message", "No artwork found with id: 3"));
 	}
@@ -90,19 +90,18 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_PostArtworkWithoutId_ShouldInsertNewArtwork() throws Exception {
-		mvc.perform(
-				post("/artworks/save").param("title", "Sunflowers").param("medium", "Oil").param("yearCreated", "1888"))
-				.andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("title", "Composition VIII").param("medium", "Oil")
+				.param("yearCreated", "1923")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "Sunflowers", "Oil", 1888));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "Composition VIII", "Oil", 1923));
 	}
 
 	@Test
 	void test_PostArtworkWithId_ShouldUpdateExistingArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("id", "4").param("title", "Water Lilies").param("medium", "Oil")
-				.param("yearCreated", "1906")).andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("id", "4").param("title", "Girl with Balloon").param("medium", "Spray")
+				.param("yearCreated", "2002")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "Water Lilies", "Oil", 1906));
+		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "Girl with Balloon", "Spray", 2002));
 	}
 
 	@Test

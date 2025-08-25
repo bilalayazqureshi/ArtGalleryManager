@@ -5,11 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Artist;
 import com.example.demo.services.ArtistService;
@@ -18,12 +14,12 @@ import com.example.demo.services.ArtistService;
 @RequestMapping("/artists")
 public class ArtistWebController {
 
-	@Autowired
-	private ArtistService artistService;
-
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ARTIST_ATTRIBUTE = "artist";
 	private static final String ARTISTS_ATTRIBUTE = "artists";
+
+	@Autowired
+	private ArtistService artistService;
 
 	@GetMapping
 	public String listArtists(Model model) {
@@ -38,7 +34,7 @@ public class ArtistWebController {
 		Artist artist = artistService.getArtistById(id);
 		model.addAttribute(ARTIST_ATTRIBUTE, artist);
 		model.addAttribute(MESSAGE_ATTRIBUTE, artist == null ? "No artist found with id: " + id : "");
-		return "artist";
+		return "edit_artist";
 	}
 
 	@GetMapping("/new")
