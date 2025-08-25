@@ -6,17 +6,11 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
-import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
 import com.example.demo.services.ArtworkService;
 
@@ -85,7 +79,8 @@ public class ArtworkWebControllerTest {
 	@Test
 	void test_EditNewArtwork() throws Exception {
 		mvc.perform(get("/artworks/new")).andExpect(view().name("artwork"))
-				.andExpect(model().attribute("artwork", new Artwork())).andExpect(model().attribute("message", ""));
+				.andExpect(model().attribute("artwork", new Artwork(null, null, null, 0)))
+				.andExpect(model().attribute("message", ""));
 		verifyNoMoreInteractions(artworkService);
 	}
 

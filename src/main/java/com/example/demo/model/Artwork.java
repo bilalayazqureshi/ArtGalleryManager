@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import java.util.Objects;
+
 public class Artwork {
 
 	private Long id;
@@ -64,5 +66,22 @@ public class Artwork {
 
 	public void setArtist(Artist artist) {
 		this.artist = artist;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Artwork))
+			return false;
+		Artwork artwork = (Artwork) o;
+		return yearCreated == artwork.yearCreated && Objects.equals(id, artwork.id)
+				&& Objects.equals(title, artwork.title) && Objects.equals(medium, artwork.medium)
+				&& Objects.equals(artist, artwork.artist);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, title, medium, yearCreated, artist);
 	}
 }
