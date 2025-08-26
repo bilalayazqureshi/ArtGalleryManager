@@ -17,7 +17,7 @@ public class Artwork {
 	}
 
 	public Artwork() {
-		// Default constructor
+
 	}
 
 	public Long getId() {
@@ -69,9 +69,7 @@ public class Artwork {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Artwork other = (Artwork) obj;
-		return yearCreated == other.yearCreated &&
-			   Objects.equals(id, other.id) &&
-			   Objects.equals(title, other.title) &&
-			   Objects.equals(medium, other.medium);
+		return yearCreated == other.yearCreated && Objects.equals(id, other.id) && Objects.equals(title, other.title)
+				&& Objects.equals(medium, other.medium);
 	}
 }

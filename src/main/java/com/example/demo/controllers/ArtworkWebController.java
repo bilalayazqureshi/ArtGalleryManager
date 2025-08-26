@@ -31,9 +31,9 @@ public class ArtworkWebController {
 
 	@GetMapping("/edit/{id}")
 	public String editArtwork(@PathVariable long id, Model model) {
-		Artwork artwork = artworkService.getArtworkById(id);
-		model.addAttribute(ARTWORK_ATTRIBUTE, artwork);
-		model.addAttribute(MESSAGE_ATTRIBUTE, artwork == null ? "No artwork found with id: " + id : "");
+		Artwork art = artworkService.getArtworkById(id);
+		model.addAttribute(ARTWORK_ATTRIBUTE, art);
+		model.addAttribute(MESSAGE_ATTRIBUTE, art == null ? "No artwork found with id: " + id : "");
 		return "edit_artwork";
 	}
 
@@ -41,7 +41,7 @@ public class ArtworkWebController {
 	public String newArtwork(Model model) {
 		model.addAttribute(ARTWORK_ATTRIBUTE, new Artwork());
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
-		return "artwork";
+		return "edit_artwork";
 	}
 
 	@PostMapping("/save")
@@ -54,9 +54,10 @@ public class ArtworkWebController {
 		return "redirect:/artworks";
 	}
 
-	@DeleteMapping("/delete/{id}")
-	public String deleteArtwork(@PathVariable long id) {
+	@GetMapping("/delete/{id}")
+	public String deleteArtwork(@PathVariable long id, Model model) {
 		artworkService.deleteArtworkById(id);
-		return "redirect:/artworks";
+		model.addAttribute("deletedId", id);
+		return "delete_artwork";
 	}
 }

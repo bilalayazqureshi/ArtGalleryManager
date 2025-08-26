@@ -6,18 +6,13 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.List;
-
-import com.example.demo.model.Artwork;
-import com.example.demo.services.ArtworkService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +20,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.example.demo.model.Artwork;
+import com.example.demo.services.ArtworkService;
 
 @WebMvcTest(controllers = ArtworkWebController.class)
 class ArtworkWebControllerTest {
@@ -47,7 +45,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_ListView_ShowsArtworks() throws Exception {
-		List<Artwork> artworks = asList(new Artwork(1L, "Guernica", "Oil", 1937));
+		List<Artwork> artworks = asList(new Artwork(1L, "Art1", "Oil", 1889));
 		when(artworkService.getAllArtworks()).thenReturn(artworks);
 
 		mvc.perform(get("/artworks")).andExpect(view().name("artwork"))
@@ -65,7 +63,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_EditArtwork_WhenFound() throws Exception {
-		Artwork art = new Artwork(2L, "The Kiss", "Oil", 1907);
+		Artwork art = new Artwork(2L, "Art2", "Ink", 1901);
 		when(artworkService.getArtworkById(2L)).thenReturn(art);
 
 		mvc.perform(get("/artworks/edit/2")).andExpect(view().name("edit_artwork"))
@@ -83,31 +81,31 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_EditNewArtwork() throws Exception {
-		mvc.perform(get("/artworks/new")).andExpect(view().name("artwork"))
+		mvc.perform(get("/artworks/new")).andExpect(view().name("edit_artwork"))
 				.andExpect(model().attribute("artwork", new Artwork())).andExpect(model().attribute("message", ""));
 		verifyNoMoreInteractions(artworkService);
 	}
 
 	@Test
 	void test_PostArtworkWithoutId_ShouldInsertNewArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("title", "Composition VIII").param("medium", "Oil")
-				.param("yearCreated", "1923")).andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("title", "NewArt").param("medium", "Watercolor").param("yearCreated",
+				"2020")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "Composition VIII", "Oil", 1923));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "NewArt", "Watercolor", 2020));
 	}
 
 	@Test
 	void test_PostArtworkWithId_ShouldUpdateExistingArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("id", "4").param("title", "Girl with Balloon").param("medium", "Spray")
-				.param("yearCreated", "2002")).andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("id", "4").param("title", "UpdatedArt").param("medium", "Acrylic")
+				.param("yearCreated", "2021")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "Girl with Balloon", "Spray", 2002));
+		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "UpdatedArt", "Acrylic", 2021));
 	}
 
 	@Test
 	void test_DeleteArtwork() throws Exception {
-		mvc.perform(delete("/artworks/delete/5")).andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/artworks"));
+		mvc.perform(get("/artworks/delete/5")).andExpect(status().isOk()).andExpect(view().name("delete_artwork"))
+				.andExpect(model().attribute("deletedId", 5L));
 
 		verify(artworkService).deleteArtworkById(5L);
 	}

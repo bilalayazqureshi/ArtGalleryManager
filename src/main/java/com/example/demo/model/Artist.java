@@ -15,7 +15,7 @@ public class Artist {
 	}
 
 	public Artist() {
-		// no-arg constructor required for form binding
+
 	}
 
 	public Long getId() {

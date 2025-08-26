@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Artist;
 import com.example.demo.services.ArtistService;
@@ -14,12 +17,12 @@ import com.example.demo.services.ArtistService;
 @RequestMapping("/artists")
 public class ArtistWebController {
 
+	@Autowired
+	private ArtistService artistService;
+
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ARTIST_ATTRIBUTE = "artist";
 	private static final String ARTISTS_ATTRIBUTE = "artists";
-
-	@Autowired
-	private ArtistService artistService;
 
 	@GetMapping
 	public String listArtists(Model model) {
@@ -41,7 +44,7 @@ public class ArtistWebController {
 	public String newArtist(Model model) {
 		model.addAttribute(ARTIST_ATTRIBUTE, new Artist());
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
-		return "artist";
+		return "edit_artist";
 	}
 
 	@PostMapping("/save")
@@ -54,9 +57,10 @@ public class ArtistWebController {
 		return "redirect:/artists";
 	}
 
-	@DeleteMapping("/delete/{id}")
-	public String deleteArtist(@PathVariable long id) {
+	@GetMapping("/delete/{id}")
+	public String deleteArtist(@PathVariable long id, Model model) {
 		artistService.deleteArtistById(id);
-		return "redirect:/artists";
+		model.addAttribute("deletedId", id);
+		return "delete_artist";
 	}
 }

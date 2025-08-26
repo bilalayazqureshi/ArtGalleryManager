@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>Artists</title>
+	<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+	<div class="button-group">
+		<a th:href="@{/artists/new}" class="btn secondary">New artist</a>
+		<a th:href="@{/}" class="btn secondary">All Events</a>
+	</div>
+
+	<div th:if="${artists.empty}">
+		<div>No artist</div>
+	</div>
+
+	<div th:unless="${artists.empty}">
+		<table id="artist_table">
+			<caption>Artists</caption>
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Nationality</th>
+					<th scope="col">Edit</th>
+					<th scope="col">Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="artist : ${artists}">
+					<td th:text="${artist.id}"></td>
+					<td th:text="${artist.name}"></td>
+					<td th:text="${artist.nationality}"></td>
+					<td><a th:href="@{/artists/edit/{id}(id=${artist.id})}" class="btn secondary">Edit</a></td>
+					<td><a th:href="@{/artists/delete/{id}(id=${artist.id})}" class="btn danger">Delete</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

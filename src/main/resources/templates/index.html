@@ -1,9 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Index Page</title>
+	<meta charset="UTF-8" />
+	<title>Artworks</title>
+	<link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-	<h1>Hello from index</h1>
+	<div class="button-group">
+		<a th:href="@{/artworks/new}" class="btn secondary">New Artwork</a>
+		<a th:href="@{/guests}" class="btn secondary">All Guests</a>
+		<a th:href="@{/artists}" class="btn secondary">All Artists</a>
+	</div>
+
+	
+	<div th:if="${artworks == null or #lists.isEmpty(artworks)}">
+		<div>No artwork</div>
+	</div>
+
+	
+	<div th:unless="${artworks == null or #lists.isEmpty(artworks)}">
+		<table id="artwork_table">
+			<caption>Artworks</caption>
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Title</th>
+					<th scope="col">Medium</th>
+					<th scope="col">Year Created</th>
+					<th scope="col">Edit</th>
+					<th scope="col">Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="artwork : ${artworks}">
+					<td th:text="${artwork.id}"></td>
+					<td th:text="${artwork.title}"></td>
+					<td th:text="${artwork.medium}"></td>
+					<td th:text="${artwork.yearCreated}"></td>
+					<td><a th:href="@{/artworks/edit/{id}(id=${artwork.id})}" class="btn secondary">Edit</a></td>
+					<td><a th:href="@{/artworks/delete/{id}(id=${artwork.id})}" class="btn danger">Delete</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>
