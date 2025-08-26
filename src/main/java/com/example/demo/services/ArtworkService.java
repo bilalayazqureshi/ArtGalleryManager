@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -10,31 +12,36 @@ import com.example.demo.model.Artwork;
 @Service
 public class ArtworkService {
 
+	private final Map<Long, Artwork> artworks = new LinkedHashMap<>();
+
+	public ArtworkService() {
+
+		artworks.put(1L, new Artwork(1L, "Mona Lisa", "Portrait of a woman", 1503));
+		artworks.put(2L, new Artwork(2L, "The Two Fridas", "Double self-portrait", 1939));
+	}
+
 	public List<Artwork> getAllArtworks() {
-		Artwork a1 = new Artwork();
-		a1.setId(1L);
-		a1.setTitle("Sample Artwork 1");
-
-		Artwork a2 = new Artwork();
-		a2.setId(2L);
-		a2.setTitle("Sample Artwork 2");
-
-		return Arrays.asList(a1, a2);
+		return new ArrayList<>(artworks.values());
 	}
 
-	public Artwork getArtworkById(Long id) {
-		return getAllArtworks().stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
+	public Artwork getArtworkById(long id) {
+		return artworks.get(id);
 	}
 
-	public void insertNewArtwork(Artwork artwork) {
-
+	public Artwork insertNewArtwork(Artwork artwork) {
+		long newId = artworks.size() + 1L;
+		artwork.setId(newId);
+		artworks.put(newId, artwork);
+		return artwork;
 	}
 
-	public void updateArtworkById(Long id, Artwork updated) {
-
+	public Artwork updateArtworkById(long id, Artwork replacement) {
+		replacement.setId(id);
+		artworks.put(id, replacement);
+		return replacement;
 	}
 
-	public void deleteArtworkById(Long id) {
-
+	public void deleteArtworkById(long id) {
+		artworks.remove(id);
 	}
 }
