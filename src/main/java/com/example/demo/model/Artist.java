@@ -1,11 +1,12 @@
 package com.example.demo.model;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
@@ -13,14 +14,13 @@ import jakarta.persistence.ManyToMany;
 public class Artist {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private String name;
 	private String nationality;
 
 	@ManyToMany(mappedBy = "artists")
-	private Set<Artwork> artworks = new HashSet<>();
+	private List<Artwork> artworks = new ArrayList<>();
 
 	public Artist(Long id, String name, String nationality) {
 		this.id = id;
@@ -29,6 +29,7 @@ public class Artist {
 	}
 
 	public Artist() {
+	
 	}
 
 	public Long getId() {
@@ -55,26 +56,26 @@ public class Artist {
 		this.nationality = nationality;
 	}
 
-	public Set<Artwork> getArtworks() {
-		return artworks;
-	}
-
-	public void setArtworks(Set<Artwork> artworks) {
-		this.artworks = artworks;
-	}
-
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof Artist))
-			return false;
-		Artist artist = (Artist) o;
-		return Objects.equals(id, artist.id);
+	public String toString() {
+		return "Artist [id=" + id + ", name=" + name + ", nationality=" + nationality + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, name, nationality);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Artist other = (Artist) obj;
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name)
+				&& Objects.equals(nationality, other.nationality);
 	}
 }

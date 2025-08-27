@@ -2,7 +2,8 @@ package com.example.demo.jpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Set;
+import java.util.List;
+
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ class ArtworkJpaTest {
 	void testJpaMapping() {
 		Artist artist = entityManager.persistFlushFind(new Artist(null, "Pablo Picasso", "Spanish"));
 		Artwork artwork = new Artwork(null, "Guernica", "Oil on canvas", 1937);
-		artwork.setArtists(Set.of(artist));
+		artwork.setArtists(List.of(artist));
 		Artwork saved = entityManager.persistFlushFind(artwork);
 
 		assertThat(saved.getTitle()).isEqualTo("Guernica");

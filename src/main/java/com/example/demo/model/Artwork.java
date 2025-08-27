@@ -1,23 +1,22 @@
 package com.example.demo.model;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "artwork")
 public class Artwork {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String title;
@@ -26,16 +25,17 @@ public class Artwork {
 
 	@ManyToMany
 	@JoinTable(name = "artwork_artist", joinColumns = @JoinColumn(name = "artwork_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-	private Set<Artist> artists = new HashSet<>();
+	private List<Artist> artists = new ArrayList<>();
+
+	public Artwork() {
+
+	}
 
 	public Artwork(Long id, String title, String medium, int yearCreated) {
 		this.id = id;
 		this.title = title;
 		this.medium = medium;
 		this.yearCreated = yearCreated;
-	}
-
-	public Artwork() {
 	}
 
 	public Long getId() {
@@ -54,6 +54,10 @@ public class Artwork {
 		return yearCreated;
 	}
 
+	public List<Artist> getArtists() {
+		return artists;
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -70,26 +74,28 @@ public class Artwork {
 		this.yearCreated = yearCreated;
 	}
 
-	public Set<Artist> getArtists() {
-		return artists;
-	}
-
-	public void setArtists(Set<Artist> artists) {
+	public void setArtists(List<Artist> artists) {
 		this.artists = artists;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof Artwork))
-			return false;
-		Artwork artwork = (Artwork) o;
-		return Objects.equals(id, artwork.id);
+	public String toString() {
+		return "Artwork [id=" + id + ", title=" + title + ", medium=" + medium + ", yearCreated=" + yearCreated + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, title, medium, yearCreated);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		Artwork other = (Artwork) obj;
+		return Objects.equals(id, other.id) && Objects.equals(title, other.title)
+				&& Objects.equals(medium, other.medium) && yearCreated == other.yearCreated;
 	}
 }

@@ -11,35 +11,37 @@ import com.example.demo.repositories.ArtistRepository;
 @Service
 public class ArtistService {
 
-	private ArtistRepository artistRepository;
+	private final ArtistRepository artistRepository;
 
 	public ArtistService(ArtistRepository artistRepository) {
 		this.artistRepository = artistRepository;
 	}
 
+
 	public Artist getArtistById(long id) {
-		Optional<Artist> optionalArtist = artistRepository.findById(id);
-		return optionalArtist.orElse(null);
+		Optional<Artist> artist = artistRepository.findById(id);
+		return artist.orElse(null); 
 	}
 
+
 	public Artist insertNewArtist(Artist artist) {
+		artist.setId(null); 
 		return artistRepository.save(artist);
 	}
 
+
 	public Artist updateArtistById(long id, Artist updatedArtist) {
-		Optional<Artist> existingArtist = artistRepository.findById(id);
-		if (existingArtist.isPresent()) {
-			return artistRepository.save(updatedArtist);
-		}
-		return null;
+		updatedArtist.setId(id); 
+		return artistRepository.save(updatedArtist); 
 	}
 
+	
 	public void deleteArtistById(long id) {
 		artistRepository.deleteById(id);
 	}
 
-	public List<Artist> getAllArtists() {
-		return artistRepository.findAll();
-	}
 
+	public List<Artist> getAllArtists() {
+		return artistRepository.findAll(); 
+	}
 }
