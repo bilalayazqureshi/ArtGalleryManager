@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,7 +17,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.example.demo.model.Artist;
-import com.example.demo.repository.ArtistRepository;
+import com.example.demo.repositories.ArtistRepository;
+import com.example.demo.service.ArtistService;
 
 class ArtistServiceTest {
 

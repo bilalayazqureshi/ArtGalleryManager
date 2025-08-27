@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Artwork;
-import com.example.demo.repository.ArtworkRepository;
+import com.example.demo.repositories.ArtworkRepository;
 
 @Service
 public class ArtworkService {

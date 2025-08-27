@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Artist;
-import com.example.demo.repository.ArtistRepository;
+import com.example.demo.repositories.ArtistRepository;
 
 @Service
 public class ArtistService {

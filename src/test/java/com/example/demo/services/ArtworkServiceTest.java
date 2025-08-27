@@ -1,12 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
-import com.example.demo.repository.ArtworkRepository;
+import com.example.demo.repositories.ArtworkRepository;
+import com.example.demo.service.ArtworkService;
 
 class ArtworkServiceTest {
 
@@ -35,8 +32,7 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testGetArtworkById() {
-		Artist artist = new Artist(null,"Leonardo da Vinci", "Italian");
-		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
+		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503);
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(artwork));
 
 		Artwork result = artworkService.getArtworkById(1L);
@@ -45,7 +41,6 @@ class ArtworkServiceTest {
 		assertEquals("Mona Lisa", result.getTitle());
 		assertEquals("Oil", result.getMedium());
 		assertEquals(1503, result.getYearCreated());
-		assertEquals("Leonardo da Vinci", result.getArtist().getName());
 		verify(artworkRepository, times(1)).findById(1L);
 	}
 
@@ -61,9 +56,8 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testInsertNewArtwork() {
-		Artist artist = new Artist(null,"Vincent van Gogh", "Dutch");
-		Artwork artwork = new Artwork(null, "Starry Night", "Oil on canvas", 1889, artist);
-		Artwork savedArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
+		Artwork artwork = new Artwork(null, "Starry Night", "Oil on canvas", 1889);
+		Artwork savedArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889);
 
 		when(artworkRepository.save(artwork)).thenReturn(savedArtwork);
 
@@ -73,15 +67,13 @@ class ArtworkServiceTest {
 		assertEquals("Starry Night", result.getTitle());
 		assertEquals("Oil on canvas", result.getMedium());
 		assertEquals(1889, result.getYearCreated());
-		assertEquals("Vincent van Gogh", result.getArtist().getName());
 		verify(artworkRepository, times(1)).save(artwork);
 	}
 
 	@Test
 	public void testUpdateArtwork() {
-		Artist artist = new Artist(null,"Vincent van Gogh", "Dutch");
-		Artwork existingArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
-		Artwork updatedArtwork = new Artwork(1L, "Starry Night Updated", "Oil on canvas", 1890, artist);
+		Artwork existingArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889);
+		Artwork updatedArtwork = new Artwork(1L, "Starry Night Updated", "Oil on canvas", 1890);
 
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(existingArtwork));
 		when(artworkRepository.save(updatedArtwork)).thenReturn(updatedArtwork);
@@ -106,11 +98,8 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testGetAllArtworks() {
-		Artist artist1 = new Artist(null,"Leonardo da Vinci", "Italian");
-		Artist artist2 = new Artist(null,"Vincent van Gogh", "Dutch");
-
-		Artwork artwork1 = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist1);
-		Artwork artwork2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889, artist2);
+		Artwork artwork1 = new Artwork(1L, "Mona Lisa", "Oil", 1503);
+		Artwork artwork2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889);
 
 		when(artworkRepository.findAll()).thenReturn(List.of(artwork1, artwork2));
 
@@ -120,5 +109,4 @@ class ArtworkServiceTest {
 		assertEquals(2, artworks.size());
 		verify(artworkRepository, times(1)).findAll();
 	}
-
 }
