@@ -19,8 +19,10 @@ public class Artist {//NOSONAR
 	private String name;
 	private String nationality;
 
+
 	@ManyToMany(mappedBy = "artists")
 	private List<Artwork> artworks = new ArrayList<>();
+
 
 	public Artist(Long id, String name, String nationality) {
 		this.id = id;

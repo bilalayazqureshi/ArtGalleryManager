@@ -13,7 +13,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
-public class Artwork {//NOSONAR
+public class Artwork { // NOSONAR
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,6 @@ public class Artwork {//NOSONAR
 	private List<Artist> artists = new ArrayList<>();
 
 	public Artwork() {
-
 	}
 
 	public Artwork(Long id, String title, String medium, int yearCreated) {
@@ -36,6 +35,16 @@ public class Artwork {//NOSONAR
 		this.title = title;
 		this.medium = medium;
 		this.yearCreated = yearCreated;
+	}
+
+	
+	public Artwork(Long id, String title, String medium, int yearCreated, Artist artist) {
+		this.id = id;
+		this.title = title;
+		this.medium = medium;
+		this.yearCreated = yearCreated;
+		this.artists = new ArrayList<>();
+		this.artists.add(artist);
 	}
 
 	public Long getId() {

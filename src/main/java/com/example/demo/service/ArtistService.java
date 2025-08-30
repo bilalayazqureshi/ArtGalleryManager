@@ -17,29 +17,24 @@ public class ArtistService {
 		this.artistRepository = artistRepository;
 	}
 
-
 	public Artist getArtistById(long id) {
 		Optional<Artist> artist = artistRepository.findById(id);
 		return artist.orElse(null); 
 	}
-
 
 	public Artist insertNewArtist(Artist artist) {
 		artist.setId(null); 
 		return artistRepository.save(artist);
 	}
 
-
 	public Artist updateArtistById(long id, Artist updatedArtist) {
 		updatedArtist.setId(id); 
 		return artistRepository.save(updatedArtist); 
 	}
 
-	
 	public void deleteArtistById(long id) {
 		artistRepository.deleteById(id);
 	}
-
 
 	public List<Artist> getAllArtists() {
 		return artistRepository.findAll(); 
