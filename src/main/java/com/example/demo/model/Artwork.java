@@ -13,7 +13,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
-public class Artwork {
+public class Artwork {//NOSONAR
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

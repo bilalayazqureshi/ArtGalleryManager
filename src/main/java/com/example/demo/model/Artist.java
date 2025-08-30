@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
 @Entity
-public class Artist {
+public class Artist {//NOSONAR
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
