@@ -11,6 +11,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.util.List;
 
 import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
@@ -97,4 +100,33 @@ class ArtworkRestControllerTest {
 
 		mvc.perform(delete("/api/artworks/1")).andExpect(status().isOk()).andExpect(content().string(""));
 	}
+	
+	@Test
+	void testGetAllArtworks() throws Exception {
+		List<Artwork> artworks = List.of(
+			new Artwork(1L, "Art1", "Oil", 2021, new Artist(1L, "Artist A", "Italy")),
+			new Artwork(2L, "Art2", "Ink", 2022, new Artist(2L, "Artist B", "France"))
+		);
+		when(artworkService.getAllArtworks()).thenReturn(artworks);
+
+		mvc.perform(get("/api/artworks"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.length()").value(2))
+			.andExpect(jsonPath("$[0].title").value("Art1"))
+			.andExpect(jsonPath("$[1].title").value("Art2"));
+	}
+
+	@Test
+	void testGetArtworkById() throws Exception {
+		when(artworkService.getArtworkById(1L))
+			.thenReturn(new Artwork(1L, "Art1", "Oil", 2021, new Artist(1L, "Artist A", "Italy")));
+
+		mvc.perform(get("/api/artworks/1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(1))
+			.andExpect(jsonPath("$.title").value("Art1"))
+			.andExpect(jsonPath("$.artists[0].name").value("Artist A"));
+	}
+	
+	
 }

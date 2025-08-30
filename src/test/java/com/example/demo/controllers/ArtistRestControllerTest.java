@@ -11,6 +11,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.util.List;
 
 import com.example.demo.model.Artist;
 import com.example.demo.service.ArtistService;
@@ -71,5 +74,23 @@ public class ArtistRestControllerTest {
 		doNothing().when(artistService).deleteArtistById(anyLong());
 
 		this.mvc.perform(delete("/api/artists/1")).andExpect(status().isOk()).andExpect(content().string(""));
+	}
+	
+	@Test
+	void testGetAllArtists() throws Exception {
+		List<Artist> artists = List.of(new Artist(1L, "Alice", "Italian"), new Artist(2L, "Bob", "French"));
+		when(artistService.getAllArtists()).thenReturn(artists);
+
+		mvc.perform(get("/api/artists")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
+				.andExpect(jsonPath("$[0].name").value("Alice"))
+				.andExpect(jsonPath("$[1].nationality").value("French"));
+	}
+
+	@Test
+	void testGetArtistById() throws Exception {
+		when(artistService.getArtistById(1L)).thenReturn(new Artist(1L, "Alice", "Italian"));
+
+		mvc.perform(get("/api/artists/1")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.name").value("Alice")).andExpect(jsonPath("$.nationality").value("Italian"));
 	}
 }
