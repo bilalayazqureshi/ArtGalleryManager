@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Artwork;
+import com.example.demo.model.Artist;
 import com.example.demo.services.ArtworkService;
+import com.example.demo.services.ArtistService;
 
 @Controller
 @RequestMapping("/artworks")
@@ -21,6 +23,9 @@ public class ArtworkWebController {
 	@Autowired
 	private ArtworkService artworkService;
 
+	@Autowired
+	private ArtistService artistService;
+
 	@GetMapping
 	public String listArtworks(Model model) {
 		List<Artwork> allArtworks = artworkService.getAllArtworks();
@@ -31,21 +36,29 @@ public class ArtworkWebController {
 
 	@GetMapping("/edit/{id}")
 	public String editArtwork(@PathVariable long id, Model model) {
-		Artwork art = artworkService.getArtworkById(id);
-		model.addAttribute(ARTWORK_ATTRIBUTE, art);
-		model.addAttribute(MESSAGE_ATTRIBUTE, art == null ? "No artwork found with id: " + id : "");
+		Artwork artwork = artworkService.getArtworkById(id);
+		List<Artist> artists = artistService.getAllArtists();
+		model.addAttribute("artists", artists);
+		if (artwork == null) {
+			model.addAttribute("artwork", null);
+			model.addAttribute("message", "No artwork found with id: " + id);
+		} else {
+			model.addAttribute("artwork", artwork);
+			model.addAttribute("message", "");
+		}
 		return "edit_artwork";
 	}
 
 	@GetMapping("/new")
 	public String newArtwork(Model model) {
 		model.addAttribute(ARTWORK_ATTRIBUTE, new Artwork());
+		model.addAttribute("artists", artistService.getAllArtists());
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
 		return "edit_artwork";
 	}
 
 	@PostMapping("/save")
-	public String saveArtwork(Artwork artwork) {
+	public String saveArtwork(@ModelAttribute("artwork") Artwork artwork) {
 		if (artwork.getId() == null) {
 			artworkService.insertNewArtwork(artwork);
 		} else {

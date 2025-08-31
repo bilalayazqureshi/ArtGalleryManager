@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,9 +16,8 @@ public class ArtworkService {
 	private final Map<Long, Artwork> artworks = new LinkedHashMap<>();
 
 	public ArtworkService() {
-
-		artworks.put(1L, new Artwork(1L, "Mona Lisa", "Portrait of a woman", 1503));
-		artworks.put(2L, new Artwork(2L, "The Two Fridas", "Double self-portrait", 1939));
+		artworks.put(1L, new Artwork(1L, "Mona Lisa", "Louvre Museum", 1503));
+		artworks.put(2L, new Artwork(2L, "The Two Fridas", "Mexico City", 1939));
 	}
 
 	public List<Artwork> getAllArtworks() {

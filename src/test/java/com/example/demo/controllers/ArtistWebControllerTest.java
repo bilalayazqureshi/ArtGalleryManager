@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,20 +10,26 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.model.Artist;
+import com.example.demo.model.Artwork;
 import com.example.demo.services.ArtistService;
+import com.example.demo.services.ArtworkService;
 
 @WebMvcTest(controllers = ArtistWebController.class)
 class ArtistWebControllerTest {
@@ -32,6 +39,9 @@ class ArtistWebControllerTest {
 
 	@MockBean
 	private ArtistService artistService;
+
+	@MockBean
+	private ArtworkService artworkService;
 
 	@Test
 	void testStatus200_ListView() throws Exception {
@@ -45,7 +55,7 @@ class ArtistWebControllerTest {
 
 	@Test
 	void test_ListView_ShowsArtists() throws Exception {
-		List<Artist> artists = asList(new Artist(1L, "Leonardo", "Italian"));
+		List<Artist> artists = asList(new Artist(1L, "Alice", "Italian"));
 		when(artistService.getAllArtists()).thenReturn(artists);
 
 		mvc.perform(get("/artists")).andExpect(view().name("artist")).andExpect(model().attribute("artists", artists))
@@ -63,7 +73,7 @@ class ArtistWebControllerTest {
 
 	@Test
 	void test_EditArtist_WhenArtistIsFound() throws Exception {
-		Artist artist = new Artist(1L, "Vincent", "Dutch");
+		Artist artist = new Artist(1L, "Bob", "Spanish");
 		when(artistService.getArtistById(1L)).thenReturn(artist);
 
 		mvc.perform(get("/artists/edit/1")).andExpect(view().name("edit_artist"))
@@ -88,18 +98,18 @@ class ArtistWebControllerTest {
 
 	@Test
 	void test_PostArtistWithoutId_ShouldInsertNewArtist() throws Exception {
-		mvc.perform(post("/artists/save").param("name", "Michelangelo").param("nationality", "Italian"))
+		mvc.perform(post("/artists/save").param("name", "Charlie").param("nationality", "German"))
 				.andExpect(view().name("redirect:/artists"));
 
-		verify(artistService).insertNewArtist(new Artist(null, "Michelangelo", "Italian"));
+		verify(artistService).insertNewArtist(new Artist(null, "Charlie", "German"));
 	}
 
 	@Test
 	void test_PostArtistWithId_ShouldUpdateExistingArtist() throws Exception {
-		mvc.perform(post("/artists/save").param("id", "2").param("name", "Raphael").param("nationality", "Italian"))
+		mvc.perform(post("/artists/save").param("id", "2").param("name", "Charlie").param("nationality", "German"))
 				.andExpect(view().name("redirect:/artists"));
 
-		verify(artistService).updateArtistById(2L, new Artist(2L, "Raphael", "Italian"));
+		verify(artistService).updateArtistById(2L, new Artist(2L, "Charlie", "German"));
 	}
 
 	@Test
@@ -108,5 +118,21 @@ class ArtistWebControllerTest {
 				.andExpect(model().attribute("deletedId", 3L));
 
 		verify(artistService).deleteArtistById(3L);
+	}
+
+	@Test
+	void saveArtist_withArtwork_performsLookupAndSetsRealArtwork() throws Exception {
+		Artwork a = new Artwork(2L, "Test Artwork", "Florence", 2025);
+		when(artworkService.getArtworkById(2L)).thenReturn(a);
+
+		mvc.perform(post("/artists/save").contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", "Alice")
+				.param("nationality", "Italian").param("artwork.id", "2")).andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/artists"));
+
+		ArgumentCaptor<Artist> capt = ArgumentCaptor.forClass(Artist.class);
+		verify(artistService).insertNewArtist(capt.capture());
+		Artist saved = capt.getValue();
+
+		assertThat(saved.getArtwork()).isSameAs(a);
 	}
 }

@@ -22,6 +22,7 @@ import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.model.Artwork;
+import com.example.demo.services.ArtistService;
 import com.example.demo.services.ArtworkService;
 
 @WebMvcTest(controllers = ArtworkWebController.class)
@@ -32,6 +33,9 @@ class ArtworkWebControllerTest {
 
 	@MockBean
 	private ArtworkService artworkService;
+
+	@MockBean
+	private ArtistService artistService;
 
 	@Test
 	void testStatus200_ListView() throws Exception {
@@ -45,7 +49,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_ListView_ShowsArtworks() throws Exception {
-		List<Artwork> artworks = asList(new Artwork(1L, "Art1", "Oil", 1889));
+		List<Artwork> artworks = asList(new Artwork(1L, "A1", "Rome", 2025));
 		when(artworkService.getAllArtworks()).thenReturn(artworks);
 
 		mvc.perform(get("/artworks")).andExpect(view().name("artwork"))
@@ -63,11 +67,11 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_EditArtwork_WhenFound() throws Exception {
-		Artwork art = new Artwork(2L, "Art2", "Ink", 1901);
-		when(artworkService.getArtworkById(2L)).thenReturn(art);
+		Artwork a = new Artwork(2L, "A2", "Venice", 2025);
+		when(artworkService.getArtworkById(2L)).thenReturn(a);
 
 		mvc.perform(get("/artworks/edit/2")).andExpect(view().name("edit_artwork"))
-				.andExpect(model().attribute("artwork", art)).andExpect(model().attribute("message", ""));
+				.andExpect(model().attribute("artwork", a)).andExpect(model().attribute("message", ""));
 	}
 
 	@Test
@@ -88,18 +92,18 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_PostArtworkWithoutId_ShouldInsertNewArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("title", "NewArt").param("medium", "Watercolor").param("yearCreated",
-				"2020")).andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("title", "A3").param("medium", "Oil").param("year", "2025"))
+				.andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "NewArt", "Watercolor", 2020));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "A3", "Oil", 2025));
 	}
 
 	@Test
 	void test_PostArtworkWithId_ShouldUpdateExistingArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("id", "4").param("title", "UpdatedArt").param("medium", "Acrylic")
-				.param("yearCreated", "2021")).andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("id", "4").param("title", "A4").param("medium", "Acrylic")
+				.param("year", "2025")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "UpdatedArt", "Acrylic", 2021));
+		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "A4", "Acrylic", 2025));
 	}
 
 	@Test

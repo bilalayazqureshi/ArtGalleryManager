@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.example.demo.model.Artwork;
+import com.example.demo.services.ArtistService;
 import com.example.demo.services.ArtworkService;
 
 @WebMvcTest(controllers = ArtworkWebController.class)
@@ -30,6 +31,9 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@MockBean
 	private ArtworkService artworkService;
+
+	@MockBean
+	private ArtistService artistService;
 
 	@Test
 	void test_HomePageTitle() throws Exception {
@@ -53,17 +57,19 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@Test
 	void test_HomePageWithArtworks_ShouldShowThemInATable() throws Exception {
-		Artwork a1 = new Artwork(1L, "Mona Lisa", "Oil", 1503);
-		Artwork a2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889);
+		Artwork a1 = new Artwork(1L, "A1", "Oil", 2025);
+		Artwork a2 = new Artwork(2L, "A2", "Acrylic", 2025);
 		when(artworkService.getAllArtworks()).thenReturn(asList(a1, a2));
 
 		HtmlPage page = webClient.getPage("/artworks");
+
 		assertThat(page.getBody().getTextContent()).doesNotContain("No artwork");
 
 		HtmlTable table = page.getHtmlElementById("artwork_table");
 		String normalized = removeWindowsCR(table.asNormalizedText());
-		assertThat(normalized).isEqualTo("Artworks\n" + "ID\tTitle\tMedium\tYear\tEdit\tDelete\n"
-				+ "1\tMona Lisa\tOil\t1503\tEdit\tDelete\n" + "2\tStarry Night\tOil on canvas\t1889\tEdit\tDelete");
+
+		assertThat(normalized).isEqualTo("ID\tTitle\tMedium\tYear\tArtists\tEdit\tDelete\n"
+				+ "1\tA1\tOil\t2025\t0 artist\tEdit\tDelete\n" + "2\tA2\tAcrylic\t2025\t0 artist\tEdit\tDelete");
 
 		page.getAnchorByHref("/artworks/edit/1");
 		page.getAnchorByHref("/artworks/edit/2");
@@ -78,17 +84,19 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@Test
 	void testEditExistentArtwork() throws Exception {
-		Artwork original = new Artwork(1L, "Original", "Oil", 1600);
+		Artwork original = new Artwork(1L, "Original", "Milan", 2025);
 		when(artworkService.getArtworkById(1L)).thenReturn(original);
 
 		HtmlPage page = webClient.getPage("/artworks/edit/1");
 		HtmlForm form = page.getFormByName("artwork_record");
 
-		form.getInputByValue("Original").setValueAttribute("Modified");
-		form.getInputByValue("Oil").setValueAttribute("Watercolor");
+		form.getInputByName("title").setValueAttribute("Modified");
+		form.getInputByName("medium").setValueAttribute("Turin");
+		form.getInputByName("year").setValueAttribute("2025");
+
 		form.getButtonByName("btn_submit").click();
 
-		verify(artworkService).updateArtworkById(1L, new Artwork(1L, "Modified", "Watercolor", 1600));
+		verify(artworkService).updateArtworkById(1L, new Artwork(1L, "Modified", "Turin", 2025));
 	}
 
 	@Test
@@ -96,12 +104,13 @@ class ArtworkWebControllerHtmlUnitTest {
 		HtmlPage page = webClient.getPage("/artworks/new");
 		final HtmlForm form = page.getFormByName("artwork_record");
 
-		form.getInputByName("title").setValueAttribute("NewArt");
-		form.getInputByName("medium").setValueAttribute("Ink");
-		form.getInputByName("yearCreated").setValueAttribute("2024");
+		form.getInputByName("title").setValueAttribute("NewTitle");
+		form.getInputByName("medium").setValueAttribute("Florence");
+		form.getInputByName("year").setValueAttribute("2025");
+
 		form.getButtonByName("btn_submit").click();
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "NewArt", "Ink", 2024));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "NewTitle", "Florence", 2025));
 	}
 
 	@Test

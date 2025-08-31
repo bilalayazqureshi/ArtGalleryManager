@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8" />
-	<title>Artwork Deleted</title>
-	<link rel="stylesheet" href="/delete.css" />
+  <meta charset="UTF-8">
+  <title>Delete Artwork</title>
 </head>
 <body>
-	<div class="container">
-		<h1 th:text="'Artwork with ID ' + ${deletedId} + ' was deleted.'">Artwork Deleted</h1>
+  <h1>Delete Artwork</h1>
 
-		<div class="button-group">
-			<form th:action="@{/artworks/new}" method="get" style="display: inline;">
-				<button type="submit" name="btn_new_artwork" class="btn primary">New artwork</button>
-			</form>
+  <div>
+    <p th:text="'Artwork with ID ' + ${deletedId} + ' was deleted.'">Deleted</p>
+  </div>
 
-			<form th:action="@{/artworks}" method="get" style="display: inline;">
-				<button type="submit" name="btn_all_artworks" class="btn secondary">All artworks</button>
-			</form>
-		</div>
-	</div>
+  <div>
+    <form th:action="@{/artworks}" method="get">
+      <button type="submit" name="btn_new_artwork">New artwork</button>
+    </form>
+  </div>
+  <div>
+    <form th:action="@{/artworks}" method="get">
+      <button type="submit" name="btn_all_artworks">All artworks</button>
+    </form>
+  </div>
 </body>
 </html>

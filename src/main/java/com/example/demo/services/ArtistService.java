@@ -16,8 +16,8 @@ public class ArtistService {
 
 	public ArtistService() {
 
-		artists.put(1L, new Artist(1L, "Leonardo da Vinci", "Italian Renaissance polymath"));
-		artists.put(2L, new Artist(2L, "Frida Kahlo", "Mexican painter known for self-portraits"));
+		artists.put(1L, new Artist(1L, "Leonardo da Vinci", "Italian"));
+		artists.put(2L, new Artist(2L, "Pablo Picasso", "Spanish"));
 	}
 
 	public List<Artist> getAllArtists() {
@@ -43,5 +43,15 @@ public class ArtistService {
 
 	public void deleteArtistById(long id) {
 		artists.remove(id);
+	}
+
+	public List<Artist> findArtistsForArtwork(long artworkId) {
+		List<Artist> result = new ArrayList<>();
+		for (Artist artist : artists.values()) {
+			if (artist.getArtwork() != null && artist.getArtwork().getId().equals(artworkId)) {
+				result.add(artist);
+			}
+		}
+		return result;
 	}
 }

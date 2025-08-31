@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.example.demo.model.Artist;
 import com.example.demo.services.ArtistService;
+import com.example.demo.services.ArtworkService;
 
 @WebMvcTest(controllers = ArtistWebController.class)
 class ArtistWebControllerHtmlUnitTest {
@@ -29,6 +30,9 @@ class ArtistWebControllerHtmlUnitTest {
 
 	@MockBean
 	private ArtistService artistService;
+
+	@MockBean
+	private ArtworkService artworkService;
 
 	@Test
 	void test_HomePageTitle() throws Exception {
@@ -56,12 +60,18 @@ class ArtistWebControllerHtmlUnitTest {
 		when(artistService.getAllArtists()).thenReturn(asList(a1, a2));
 
 		HtmlPage page = webClient.getPage("/artists");
+
 		assertThat(page.getBody().getTextContent()).doesNotContain("No artist");
 
 		HtmlTable table = page.getHtmlElementById("artist_table");
 		String normalized = removeWindowsCR(table.asNormalizedText());
-		assertThat(normalized).isEqualTo("Artists\n" + "ID\tName\tNationality\tEdit\tDelete\n"
-				+ "1\tPicasso\tSpanish\tEdit\tDelete\n" + "2\tDa Vinci\tItalian\tEdit\tDelete");
+
+	
+		assertThat(normalized).isEqualTo(
+			"ID\tName\tNationality\tEdit\tDelete\n" +
+			"1\tPicasso\tSpanish\tEdit\tDelete\n" +
+			"2\tDa Vinci\tItalian\tEdit\tDelete"
+		);
 
 		page.getAnchorByHref("/artists/edit/1");
 		page.getAnchorByHref("/artists/edit/2");
@@ -76,17 +86,17 @@ class ArtistWebControllerHtmlUnitTest {
 
 	@Test
 	void testEditExistentArtist() throws Exception {
-		Artist original = new Artist(1L, "Original", "French");
+		Artist original = new Artist(1L, "Original", "German");
 		when(artistService.getArtistById(1L)).thenReturn(original);
 
 		HtmlPage page = webClient.getPage("/artists/edit/1");
 		HtmlForm form = page.getFormByName("artist_record");
 
-		form.getInputByValue("Original").setValueAttribute("Updated");
-		form.getInputByValue("French").setValueAttribute("German");
+		form.getInputByValue("Original").setValueAttribute("Modified");
+		form.getInputByValue("German").setValueAttribute("Italian");
 		form.getButtonByName("btn_submit").click();
 
-		verify(artistService).updateArtistById(1L, new Artist(1L, "Updated", "German"));
+		verify(artistService).updateArtistById(1L, new Artist(1L, "Modified", "Italian"));
 	}
 
 	@Test
@@ -95,10 +105,10 @@ class ArtistWebControllerHtmlUnitTest {
 		HtmlForm form = page.getFormByName("artist_record");
 
 		form.getInputByName("name").setValueAttribute("NewArtist");
-		form.getInputByName("nationality").setValueAttribute("Greek");
+		form.getInputByName("nationality").setValueAttribute("French");
 		form.getButtonByName("btn_submit").click();
 
-		verify(artistService).insertNewArtist(new Artist(null, "NewArtist", "Greek"));
+		verify(artistService).insertNewArtist(new Artist(null, "NewArtist", "French"));
 	}
 
 	@Test
