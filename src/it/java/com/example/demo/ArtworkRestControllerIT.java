@@ -75,6 +75,7 @@ class ArtworkRestControllerIT {
 		Artwork saved = response.getBody().as(Artwork.class);
 
 		assertThat(saved.getId()).isNotNull();
+		assertThat(saved.getYearCreated()).isEqualTo(1889);
 		assertThat(artworkRepository.findById(saved.getId())).contains(saved);
 	}
 
@@ -90,6 +91,7 @@ class ArtworkRestControllerIT {
 
 		assertThat(fetched.getId()).isEqualTo(saved.getId());
 		assertThat(fetched.getTitle()).isEqualTo("Mona Lisa");
+		assertThat(fetched.getYearCreated()).isEqualTo(1503);
 	}
 
 	@Test
@@ -105,6 +107,7 @@ class ArtworkRestControllerIT {
 
 		assertThat(result.getTitle()).isEqualTo("New Title");
 		assertThat(result.getMedium()).isEqualTo("Ink");
+		assertThat(result.getYearCreated()).isEqualTo(1651);
 	}
 
 	@Test
