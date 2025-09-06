@@ -11,18 +11,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
 @Entity
-public class Artist {//NOSONAR
+public class Artist { // NOSONAR
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String name;
 	private String nationality;
 
-
 	@ManyToMany(mappedBy = "artists")
 	private List<Artwork> artworks = new ArrayList<>();
-
 
 	public Artist(Long id, String name, String nationality) {
 		this.id = id;
@@ -31,7 +30,6 @@ public class Artist {//NOSONAR
 	}
 
 	public Artist() {
-	
 	}
 
 	public Long getId() {
@@ -44,6 +42,14 @@ public class Artist {//NOSONAR
 
 	public String getNationality() {
 		return nationality;
+	}
+
+	public List<Artwork> getArtworks() {
+		return artworks;
+	}
+
+	public void setArtworks(List<Artwork> artworks) {
+		this.artworks = artworks;
 	}
 
 	public void setId(Long id) {
@@ -72,12 +78,11 @@ public class Artist {//NOSONAR
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Artist other = (Artist) obj;
-		return Objects.equals(id, other.id) && Objects.equals(name, other.name)
-				&& Objects.equals(nationality, other.nationality);
+		return Objects.equals(id, other.id)
+			&& Objects.equals(name, other.name)
+			&& Objects.equals(nationality, other.nationality);
 	}
 }

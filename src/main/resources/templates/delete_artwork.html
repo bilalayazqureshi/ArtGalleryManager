@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delete Artwork</title>
+</head>
+<body>
+  <h1 th:text="'Artwork with ID ' + ${deletedId} + ' was deleted.'">Delete Artwork</h1>
+
+  <div>
+    <form th:action="@{/artworks/new}" method="get">
+      <button type="submit" name="btn_new_artwork">New Artwork</button>
+    </form>
+    <form th:action="@{/artworks}" method="get">
+      <button type="submit" name="btn_all_artworks">All Artworks</button>
+    </form>
+  </div>
+</body>
+</html>
