@@ -24,7 +24,11 @@ public class Artwork { // NOSONAR
 	private int yearCreated;
 
 	@ManyToMany
-	@JoinTable(name = "artwork_artist", joinColumns = @JoinColumn(name = "artwork_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
+	@JoinTable(
+		name = "artwork_artist",
+		joinColumns = @JoinColumn(name = "artwork_id"),
+		inverseJoinColumns = @JoinColumn(name = "artist_id")
+	)
 	private List<Artist> artists = new ArrayList<>();
 
 	public Artwork() {
@@ -37,7 +41,6 @@ public class Artwork { // NOSONAR
 		this.yearCreated = yearCreated;
 	}
 
-	
 	public Artwork(Long id, String title, String medium, int yearCreated, Artist artist) {
 		this.id = id;
 		this.title = title;
@@ -51,36 +54,36 @@ public class Artwork { // NOSONAR
 		return id;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public String getMedium() {
-		return medium;
-	}
-
-	public int getYearCreated() {
-		return yearCreated;
-	}
-
-	public List<Artist> getArtists() {
-		return artists;
-	}
-
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	public String getMedium() {
+		return medium;
+	}
+
 	public void setMedium(String medium) {
 		this.medium = medium;
 	}
 
+	public int getYearCreated() {
+		return yearCreated;
+	}
+
 	public void setYearCreated(int yearCreated) {
 		this.yearCreated = yearCreated;
+	}
+
+	public List<Artist> getArtists() {
+		return artists;
 	}
 
 	public void setArtists(List<Artist> artists) {
@@ -104,7 +107,9 @@ public class Artwork { // NOSONAR
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Artwork other = (Artwork) obj;
-		return Objects.equals(id, other.id) && Objects.equals(title, other.title)
-				&& Objects.equals(medium, other.medium) && yearCreated == other.yearCreated;
+		return Objects.equals(id, other.id)
+			&& Objects.equals(title, other.title)
+			&& Objects.equals(medium, other.medium)
+			&& yearCreated == other.yearCreated;
 	}
 }

@@ -11,7 +11,7 @@ import com.example.demo.repositories.ArtworkRepository;
 @Service
 public class ArtworkService {
 
-	private ArtworkRepository artworkRepository;
+	private final ArtworkRepository artworkRepository;
 
 	public ArtworkService(ArtworkRepository artworkRepository) {
 		this.artworkRepository = artworkRepository;
@@ -20,6 +20,10 @@ public class ArtworkService {
 	public Artwork getArtworkById(long id) {
 		Optional<Artwork> optionalArtwork = artworkRepository.findById(id);
 		return optionalArtwork.orElse(null);
+	}
+
+	public List<Artwork> getAllArtworksByIds(List<Long> ids) {
+		return artworkRepository.findAllById(ids);
 	}
 
 	public Artwork insertNewArtwork(Artwork artwork) {
