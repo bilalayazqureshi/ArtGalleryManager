@@ -41,6 +41,19 @@ public class ArtworkFormPage {
 		return this;
 	}
 
+	public ArtworkFormPage selectArtistByName(String artistName) {
+		WebElement dropdown = driver.findElement(By.id("artist"));
+		List<WebElement> options = dropdown.findElements(By.tagName("option"));
+
+		for (WebElement option : options) {
+			if (option.getText().trim().equals(artistName)) {
+				option.click();
+				break;
+			}
+		}
+		return this;
+	}
+
 	public ArtworkListPage submit() {
 		driver.findElement(By.cssSelector("button[type=submit]")).click();
 		return new ArtworkListPage(driver, 0);

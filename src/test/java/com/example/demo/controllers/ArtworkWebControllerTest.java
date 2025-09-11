@@ -49,7 +49,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_ListView_ShowsArtworks() throws Exception {
-		List<Artwork> artworks = asList(new Artwork(1L, "A1", "Rome", 2025));
+		List<Artwork> artworks = asList(new Artwork(1L, "A1", "Rome", 2025, null));
 		when(artworkService.getAllArtworks()).thenReturn(artworks);
 
 		mvc.perform(get("/artworks")).andExpect(view().name("artwork"))
@@ -67,7 +67,7 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_EditArtwork_WhenFound() throws Exception {
-		Artwork a = new Artwork(2L, "A2", "Venice", 2025);
+		Artwork a = new Artwork(2L, "A2", "Venice", 2025, null);
 		when(artworkService.getArtworkById(2L)).thenReturn(a);
 
 		mvc.perform(get("/artworks/edit/2")).andExpect(view().name("edit_artwork"))
@@ -92,26 +92,20 @@ class ArtworkWebControllerTest {
 
 	@Test
 	void test_PostArtworkWithoutId_ShouldInsertNewArtwork() throws Exception {
-		mvc.perform(post("/artworks/save")
-				.param("title", "A3")
-				.param("medium", "Oil")
-				.param("yearCreated", "2025"))
+		mvc.perform(post("/artworks/save").param("title", "A3").param("medium", "Oil").param("yearCreated", "2025"))
 				.andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "A3", "Oil", 2025));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "A3", "Oil", 2025, null));
 	}
 
 	@Test
 	void test_PostArtworkWithId_ShouldUpdateExistingArtwork() throws Exception {
-		mvc.perform(post("/artworks/save")
-				.param("id", "4")
-				.param("title", "A4")
-				.param("medium", "Acrylic")
-				.param("yearCreated", "2025"))
-				.andExpect(view().name("redirect:/artworks"));
+		mvc.perform(post("/artworks/save").param("id", "4").param("title", "A4").param("medium", "Acrylic")
+				.param("yearCreated", "2025")).andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "A4", "Acrylic", 2025));
+		verify(artworkService).updateArtworkById(4L, new Artwork(4L, "A4", "Acrylic", 2025, null));
 	}
+
 	@Test
 	void test_DeleteArtwork() throws Exception {
 		mvc.perform(get("/artworks/delete/5")).andExpect(status().isOk()).andExpect(view().name("delete_artwork"))

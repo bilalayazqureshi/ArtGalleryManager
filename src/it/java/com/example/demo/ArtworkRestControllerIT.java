@@ -3,8 +3,6 @@ package com.example.demo;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-
 import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
 import com.example.demo.repositories.ArtworkRepository;
@@ -66,8 +64,8 @@ class ArtworkRestControllerIT {
 	@Test
 	void testNewArtwork() {
 		Artist artist = artistRepository.save(new Artist(null, "Van Gogh", "Dutch"));
-		Artwork artwork = new Artwork(null, "Starry Night", "Oil", 1889);
-		artwork.setArtists(List.of(artist));
+		Artwork artwork = new Artwork(null, "Starry Night", "Oil", 1889, null);
+		artwork.setArtist(artist);
 
 		Response response = given().contentType(MediaType.APPLICATION_JSON_VALUE).body(artwork).when()
 				.post("/api/artworks/new");
@@ -82,8 +80,8 @@ class ArtworkRestControllerIT {
 	@Test
 	void testGetArtworkById() {
 		Artist artist = artistRepository.save(new Artist(null, "Da Vinci", "Italian"));
-		Artwork saved = artworkRepository.save(new Artwork(null, "Mona Lisa", "Oil", 1503));
-		saved.setArtists(List.of(artist));
+		Artwork saved = artworkRepository.save(new Artwork(null, "Mona Lisa", "Oil", 1503, null));
+		saved.setArtist(artist);
 		artworkRepository.save(saved);
 
 		Artwork fetched = given().when().get("/api/artworks/" + saved.getId()).then().statusCode(200).extract()
@@ -97,11 +95,10 @@ class ArtworkRestControllerIT {
 	@Test
 	void testUpdateArtwork() {
 		Artist artist = artistRepository.save(new Artist(null, "Rembrandt", "Dutch"));
-		Artwork saved = artworkRepository.save(new Artwork(null, "Old Title", "Oil", 1650));
+		Artwork saved = artworkRepository.save(new Artwork(null, "Old Title", "Oil", 1650, null));
 
-		Artwork updated = new Artwork(null, "New Title", "Ink", 1651);
-		updated.setArtists(List.of(artist));
-
+		Artwork updated = new Artwork(null, "New Title", "Ink", 1651, null);
+		updated.setArtist(artist);
 		Artwork result = given().contentType(MediaType.APPLICATION_JSON_VALUE).body(updated).when()
 				.put("/api/artworks/" + saved.getId()).then().statusCode(200).extract().as(Artwork.class);
 
@@ -112,7 +109,7 @@ class ArtworkRestControllerIT {
 
 	@Test
 	void testDeleteArtwork() {
-		Artwork saved = artworkRepository.save(new Artwork(null, "To Delete", "Charcoal", 1800));
+		Artwork saved = artworkRepository.save(new Artwork(null, "To Delete", "Charcoal", 1800, null));
 
 		given().when().delete("/api/artworks/" + saved.getId()).then().statusCode(200);
 

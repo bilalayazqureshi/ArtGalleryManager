@@ -57,8 +57,8 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@Test
 	void test_HomePageWithArtworks_ShouldShowThemInATable() throws Exception {
-		Artwork a1 = new Artwork(1L, "A1", "Oil", 2025);
-		Artwork a2 = new Artwork(2L, "A2", "Acrylic", 2025);
+		Artwork a1 = new Artwork(1L, "A1", "Oil", 2025, null);
+		Artwork a2 = new Artwork(2L, "A2", "Acrylic", 2025, null);
 		when(artworkService.getAllArtworks()).thenReturn(asList(a1, a2));
 
 		HtmlPage page = webClient.getPage("/artworks");
@@ -68,8 +68,8 @@ class ArtworkWebControllerHtmlUnitTest {
 		HtmlTable table = page.getHtmlElementById("artwork_table");
 		String normalized = removeWindowsCR(table.asNormalizedText());
 
-		assertThat(normalized).isEqualTo("ID\tTitle\tMedium\tYear\tArtists\tEdit\tDelete\n"
-				+ "1\tA1\tOil\t2025\t0 artist\tEdit\tDelete\n" + "2\tA2\tAcrylic\t2025\t0 artist\tEdit\tDelete");
+		assertThat(normalized).isEqualTo("ID\tTitle\tMedium\tYear\tArtist\tEdit\tDelete\n"
+				+ "1\tA1\tOil\t2025\tNo artist\tEdit\tDelete\n" + "2\tA2\tAcrylic\t2025\tNo artist\tEdit\tDelete");
 
 		page.getAnchorByHref("/artworks/edit/1");
 		page.getAnchorByHref("/artworks/edit/2");
@@ -84,7 +84,7 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@Test
 	void testEditExistentArtwork() throws Exception {
-		Artwork original = new Artwork(1L, "Original", "Milan", 2025);
+		Artwork original = new Artwork(1L, "Original", "Milan", 2025, null);
 		when(artworkService.getArtworkById(1L)).thenReturn(original);
 
 		HtmlPage page = webClient.getPage("/artworks/edit/1");
@@ -96,7 +96,7 @@ class ArtworkWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(artworkService).updateArtworkById(1L, new Artwork(1L, "Modified", "Turin", 2025));
+		verify(artworkService).updateArtworkById(1L, new Artwork(1L, "Modified", "Turin", 2025, null));
 	}
 
 	@Test
@@ -110,7 +110,7 @@ class ArtworkWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "NewTitle", "Florence", 2025));
+		verify(artworkService).insertNewArtwork(new Artwork(null, "NewTitle", "Florence", 2025, null));
 	}
 
 	@Test

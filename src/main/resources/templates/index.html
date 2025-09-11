@@ -11,12 +11,12 @@
     <a th:href="@{/artworks/new}" class="btn secondary">New artwork</a>
   </div>
 
-  <!-- IF NO ARTWORK -->
+
   <div th:if="${artworks.empty}">
     <div th:text="${message}">No artwork</div>
   </div>
 
-  <!-- ELSE -->
+
   <div th:unless="${artworks.empty}">
     <table id="event_table">
       <caption>Events</caption>

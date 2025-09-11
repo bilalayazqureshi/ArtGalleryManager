@@ -14,25 +14,28 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.example.demo.model.Artwork;
+import com.example.demo.model.Artist;
 import com.example.demo.repositories.ArtworkRepository;
-import com.example.demo.service.ArtworkService;
+import com.example.demo.repositories.ArtistRepository;
 
 class ArtworkServiceTest {
 
 	@Mock
 	private ArtworkRepository artworkRepository;
-
+	@Mock
+	private ArtistRepository artistRepository;
 	private ArtworkService artworkService;
 
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		artworkService = new ArtworkService(artworkRepository);
+		artworkService = new ArtworkService(artworkRepository, artistRepository);
 	}
 
 	@Test
 	public void testGetArtworkById() {
-		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503);
+		Artist artist = new Artist(1L, "Da Vinci", "Italian");
+		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(artwork));
 
 		Artwork result = artworkService.getArtworkById(1L);
@@ -56,8 +59,9 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testInsertNewArtwork() {
-		Artwork artwork = new Artwork(null, "Starry Night", "Oil on canvas", 1889);
-		Artwork savedArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889);
+		Artist artist = new Artist(2L, "Van Gogh", "Dutch");
+		Artwork artwork = new Artwork(null, "Starry Night", "Oil on canvas", 1889, artist);
+		Artwork savedArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
 
 		when(artworkRepository.save(artwork)).thenReturn(savedArtwork);
 
@@ -72,8 +76,9 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testUpdateArtwork() {
-		Artwork existingArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889);
-		Artwork updatedArtwork = new Artwork(1L, "Starry Night Updated", "Oil on canvas", 1890);
+		Artist artist = new Artist(3L, "Rembrandt", "Dutch");
+		Artwork existingArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
+		Artwork updatedArtwork = new Artwork(1L, "Starry Night Updated", "Oil on canvas", 1890, artist);
 
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(existingArtwork));
 		when(artworkRepository.save(updatedArtwork)).thenReturn(updatedArtwork);
@@ -98,8 +103,9 @@ class ArtworkServiceTest {
 
 	@Test
 	public void testGetAllArtworks() {
-		Artwork artwork1 = new Artwork(1L, "Mona Lisa", "Oil", 1503);
-		Artwork artwork2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889);
+		Artist artist = new Artist(4L, "Michelangelo", "Italian");
+		Artwork artwork1 = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
+		Artwork artwork2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889, artist);
 
 		when(artworkRepository.findAll()).thenReturn(List.of(artwork1, artwork2));
 
