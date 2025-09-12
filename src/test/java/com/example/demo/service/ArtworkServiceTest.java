@@ -115,4 +115,125 @@ class ArtworkServiceTest {
 		assertEquals(2, artworks.size());
 		verify(artworkRepository, times(1)).findAll();
 	}
+	
+	@Test
+	public void testUpdateArtwork_whenNotFound_returnsNull() {
+		long nonExistentId = 999L;
+		Artwork updatedArtwork = new Artwork(nonExistentId, "Imaginary", "Mixed", 2025, new Artist());
+
+		when(artworkRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+		Artwork result = artworkService.updateArtworkById(nonExistentId, updatedArtwork);
+
+		assertNull(result);
+		verify(artworkRepository, never()).save(any());
+	}
+	
+	@Test
+	public void testInsertNewArtwork_whenArtistIsNull() {
+		Artwork artwork = new Artwork(null, "Untitled", "Digital", 2021, null);
+		Artwork savedArtwork = new Artwork(1L, "Untitled", "Digital", 2021, null);
+
+		when(artworkRepository.save(artwork)).thenReturn(savedArtwork);
+
+		Artwork result = artworkService.insertNewArtwork(artwork);
+
+		assertNotNull(result);
+		assertEquals("Untitled", result.getTitle());
+		assertNull(result.getArtist());
+		verify(artistRepository, never()).findById(any());
+		verify(artworkRepository).save(artwork);
+	}
+	
+	
+	@Test
+	public void testInsertNewArtwork_whenArtistIdIsNull() {
+		Artist artist = new Artist(null, "Unknown", "Nowhere");
+		Artwork artwork = new Artwork(null, "Lost Artwork", "Oil", 2020, artist);
+		Artwork savedArtwork = new Artwork(1L, "Lost Artwork", "Oil", 2020, artist);
+
+		when(artworkRepository.save(artwork)).thenReturn(savedArtwork);
+
+		Artwork result = artworkService.insertNewArtwork(artwork);
+
+		assertNotNull(result);
+		assertEquals("Lost Artwork", result.getTitle());
+		verify(artistRepository, never()).findById(any());
+		verify(artworkRepository).save(artwork);
+	}
+	
+	@Test
+	public void testInsertNewArtwork_whenArtistNotFound_setsNullArtist() {
+		Artist artist = new Artist(99L, "Ghost", "Hidden");
+		Artwork artwork = new Artwork(null, "Mystery", "Mixed", 1999, artist);
+		Artwork savedArtwork = new Artwork(1L, "Mystery", "Mixed", 1999, artist); 
+
+		when(artistRepository.findById(99L)).thenReturn(Optional.empty());
+		when(artworkRepository.save(any())).thenReturn(savedArtwork);
+
+		Artwork result = artworkService.insertNewArtwork(artwork);
+
+		assertNotNull(result);
+		assertEquals("Mystery", result.getTitle());
+		assertEquals("Ghost", result.getArtist().getName());
+		verify(artistRepository).findById(99L);
+		verify(artworkRepository).save(any());
+	}
+	
+	@Test
+	public void testUpdateArtwork_whenArtistIsNull() {
+		long id = 5L;
+		Artist existingArtist = new Artist(5L, "Dali", "Spanish");
+		Artwork existingArtwork = new Artwork(id, "Dream", "Surrealism", 1931, existingArtist);
+		Artwork updatedArtwork = new Artwork(id, "Dream Updated", "Surrealism", 1932, null);
+
+		when(artworkRepository.findById(id)).thenReturn(Optional.of(existingArtwork));
+		when(artworkRepository.save(updatedArtwork)).thenReturn(updatedArtwork);
+
+		Artwork result = artworkService.updateArtworkById(id, updatedArtwork);
+
+		assertNotNull(result);
+		assertEquals("Dream Updated", result.getTitle());
+		verify(artistRepository, never()).findById(any());
+		verify(artworkRepository).save(updatedArtwork);
+	}
+	
+	@Test
+	public void testUpdateArtwork_whenArtistIdIsNull() {
+		long id = 6L;
+		Artist existingArtist = new Artist(6L, "Matisse", "French");
+		Artwork existingArtwork = new Artwork(id, "Harmony", "Oil", 1905, existingArtist);
+		Artist newArtist = new Artist(null, "Unknown", "None");
+		Artwork updatedArtwork = new Artwork(id, "Harmony Updated", "Oil", 1906, newArtist);
+
+		when(artworkRepository.findById(id)).thenReturn(Optional.of(existingArtwork));
+		when(artworkRepository.save(updatedArtwork)).thenReturn(updatedArtwork);
+
+		Artwork result = artworkService.updateArtworkById(id, updatedArtwork);
+
+		assertNotNull(result);
+		assertEquals("Harmony Updated", result.getTitle());
+		verify(artistRepository, never()).findById(any());
+		verify(artworkRepository).save(updatedArtwork);
+	}
+	
+	@Test
+	public void testUpdateArtwork_whenArtistNotFound() {
+		long id = 7L;
+		Artist existingArtist = new Artist(7L, "Rodin", "French");
+		Artwork existingArtwork = new Artwork(id, "The Thinker", "Bronze", 1902, existingArtist);
+		Artist newArtist = new Artist(999L, "Ghost", "Nowhere");
+		Artwork updatedArtwork = new Artwork(id, "The Thinker Updated", "Bronze", 1903, newArtist);
+
+		when(artworkRepository.findById(id)).thenReturn(Optional.of(existingArtwork));
+		when(artistRepository.findById(999L)).thenReturn(Optional.empty());
+		when(artworkRepository.save(updatedArtwork)).thenReturn(updatedArtwork);
+
+		Artwork result = artworkService.updateArtworkById(id, updatedArtwork);
+
+		assertNotNull(result);
+		assertEquals("The Thinker Updated", result.getTitle());
+		verify(artistRepository).findById(999L);
+		verify(artworkRepository).save(updatedArtwork);
+	}
 }

@@ -23,6 +23,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
@@ -136,4 +138,26 @@ class ArtistWebControllerTest {
 
 		assertThat(saved.getArtworks()).containsExactlyElementsOf(selectedArtworks);
 	}
+
+	@Test
+	void saveArtist_withNullArtworkIds_shouldInsert() throws Exception {
+		when(artistService.insertNewArtist(any(Artist.class))).thenReturn(new Artist(null, "Alice", "Italian"));
+
+		mvc.perform(post("/artists/save").param("name", "Alice").param("nationality", "Italian"))
+				.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/artists"));
+
+		verify(artistService).insertNewArtist(any(Artist.class));
+	}
+
+	@Test
+	void saveArtist_withEmptyArtworkIds_shouldInsertWithoutArtworks() throws Exception {
+		when(artistService.insertNewArtist(any(Artist.class))).thenReturn(new Artist(null, "Charlie", "German"));
+
+		mvc.perform(
+				post("/artists/save").param("name", "Charlie").param("nationality", "German").param("artworkIds", ""))
+				.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/artists"));
+
+		verify(artistService).insertNewArtist(any(Artist.class));
+	}
+
 }
