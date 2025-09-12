@@ -3,7 +3,6 @@ package com.example.demo.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -14,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -25,6 +23,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
@@ -85,7 +85,7 @@ class ArtistWebControllerTest {
 		when(artistService.getArtistById(1L)).thenReturn(null);
 
 		mvc.perform(get("/artists/edit/1")).andExpect(view().name("edit_artist"))
-				.andExpect(model().attribute("artist", nullValue()))
+				.andExpect(model().attributeExists("artist"))
 				.andExpect(model().attribute("message", "No artist found with id: 1"));
 	}
 
@@ -122,15 +122,14 @@ class ArtistWebControllerTest {
 
 	@Test
 	void saveArtist_withArtwork_performsLookupAndSetsRealArtwork() throws Exception {
-		List<Artwork> selectedArtworks = List.of(new Artwork(2L, "Test Artwork", "Florence", 2025));
+
+		Artist artist = new Artist(1L, "Dummy", "Test");
+		List<Artwork> selectedArtworks = List.of(new Artwork(2L, "Test Artwork", "Florence", 2025, artist));
+
 		when(artworkService.getAllArtworksByIds(List.of(2L))).thenReturn(selectedArtworks);
 
-		mvc.perform(post("/artists/save")
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "Alice")
-				.param("nationality", "Italian")
-				.param("artworkIds", "2"))
-				.andExpect(status().is3xxRedirection())
+		mvc.perform(post("/artists/save").contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", "Alice")
+				.param("nationality", "Italian").param("artworkIds", "2")).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/artists"));
 
 		ArgumentCaptor<Artist> capt = ArgumentCaptor.forClass(Artist.class);
@@ -139,4 +138,26 @@ class ArtistWebControllerTest {
 
 		assertThat(saved.getArtworks()).containsExactlyElementsOf(selectedArtworks);
 	}
+
+	@Test
+	void saveArtist_withNullArtworkIds_shouldInsert() throws Exception {
+		when(artistService.insertNewArtist(any(Artist.class))).thenReturn(new Artist(null, "Alice", "Italian"));
+
+		mvc.perform(post("/artists/save").param("name", "Alice").param("nationality", "Italian"))
+				.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/artists"));
+
+		verify(artistService).insertNewArtist(any(Artist.class));
+	}
+
+	@Test
+	void saveArtist_withEmptyArtworkIds_shouldInsertWithoutArtworks() throws Exception {
+		when(artistService.insertNewArtist(any(Artist.class))).thenReturn(new Artist(null, "Charlie", "German"));
+
+		mvc.perform(
+				post("/artists/save").param("name", "Charlie").param("nationality", "German").param("artworkIds", ""))
+				.andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/artists"));
+
+		verify(artistService).insertNewArtist(any(Artist.class));
+	}
+
 }

@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.example.demo.model.Artist;
-import com.example.demo.model.Artwork;
 import com.example.demo.service.ArtistService;
 import com.example.demo.service.ArtworkService;
 
@@ -60,10 +59,7 @@ class ArtistWebControllerHtmlUnitTest {
 
 	@Test
 	void test_HomePageWithArtists_ShouldShowThemInATable() throws Exception {
-		List<Artist> artists = asList(
-				new Artist(1L, "Picasso", "Spanish"),
-				new Artist(2L, "Da Vinci", "Italian")
-		);
+		List<Artist> artists = asList(new Artist(1L, "Picasso", "Spanish"), new Artist(2L, "Da Vinci", "Italian"));
 
 		when(artistService.getAllArtists()).thenReturn(artists);
 
@@ -74,11 +70,8 @@ class ArtistWebControllerHtmlUnitTest {
 		HtmlTable table = page.getHtmlElementById("artist_table");
 		String normalized = removeWindowsCR(table.asNormalizedText());
 
-		assertThat(normalized).isEqualTo(
-			"ID\tName\tNationality\tEdit\tDelete\n" +
-			"1\tPicasso\tSpanish\tEdit\tDelete\n" +
-			"2\tDa Vinci\tItalian\tEdit\tDelete"
-		);
+		assertThat(normalized).isEqualTo("ID\tName\tNationality\tEdit\tDelete\n" + "1\tPicasso\tSpanish\tEdit\tDelete\n"
+				+ "2\tDa Vinci\tItalian\tEdit\tDelete");
 
 		page.getAnchorByHref("/artists/edit/1");
 		page.getAnchorByHref("/artists/edit/2");
@@ -101,8 +94,8 @@ class ArtistWebControllerHtmlUnitTest {
 		HtmlPage page = webClient.getPage("/artists/edit/1");
 		HtmlForm form = page.getFormByName("artist_record");
 
-		form.getInputByValue("Original").setValueAttribute("Modified");
-		form.getInputByValue("German").setValueAttribute("Italian");
+		form.getInputByName("name").setValueAttribute("Modified");
+		form.getInputByName("nationality").setValueAttribute("Italian");
 		form.getButtonByName("btn_submit").click();
 
 		verify(artistService).updateArtistById(1L, new Artist(1L, "Modified", "Italian"));

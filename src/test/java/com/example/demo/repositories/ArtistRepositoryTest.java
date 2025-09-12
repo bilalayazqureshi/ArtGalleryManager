@@ -68,7 +68,7 @@ class ArtistRepositoryTest {
 		Artist a2 = entityManager.persistFlushFind(new Artist(null, "another", "Spanish"));
 		entityManager.persistFlushFind(new Artist(null, "no", "German"));
 		List<Artist> found = repository.findByNationalityEndingWith("sh");
-		assertThat(found).containsExactly(a2); 
+		assertThat(found).containsExactly(a2);
 	}
 
 	@Test

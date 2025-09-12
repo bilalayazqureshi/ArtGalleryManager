@@ -120,7 +120,7 @@ class ArtistServiceTest {
 		ArgumentCaptor<Artist> captor = ArgumentCaptor.forClass(Artist.class);
 		verify(artistRepository).save(captor.capture());
 
-		assertThat(captor.getValue().getId()).isNull(); 
+		assertThat(captor.getValue().getId()).isNull();
 		assertThat(result).isSameAs(saved);
 	}
 
@@ -136,7 +136,7 @@ class ArtistServiceTest {
 		ArgumentCaptor<Artist> captor = ArgumentCaptor.forClass(Artist.class);
 		verify(artistRepository).save(captor.capture());
 
-		assertThat(captor.getValue().getId()).isEqualTo(5L); 
+		assertThat(captor.getValue().getId()).isEqualTo(5L);
 		assertThat(result).isSameAs(saved);
 	}
 }

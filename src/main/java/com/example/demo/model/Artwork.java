@@ -1,19 +1,12 @@
 package com.example.demo.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-public class Artwork { // NOSONAR
+public class Artwork {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,22 +16,12 @@ public class Artwork { // NOSONAR
 	private String medium;
 	private int yearCreated;
 
-	@ManyToMany
-	@JoinTable(
-		name = "artwork_artist",
-		joinColumns = @JoinColumn(name = "artwork_id"),
-		inverseJoinColumns = @JoinColumn(name = "artist_id")
-	)
-	private List<Artist> artists = new ArrayList<>();
+	@ManyToOne
+	@JoinColumn(name = "artist_id")
+	@JsonIgnoreProperties("artworks")
+	private Artist artist;
 
 	public Artwork() {
-	}
-
-	public Artwork(Long id, String title, String medium, int yearCreated) {
-		this.id = id;
-		this.title = title;
-		this.medium = medium;
-		this.yearCreated = yearCreated;
 	}
 
 	public Artwork(Long id, String title, String medium, int yearCreated, Artist artist) {
@@ -46,10 +29,10 @@ public class Artwork { // NOSONAR
 		this.title = title;
 		this.medium = medium;
 		this.yearCreated = yearCreated;
-		this.artists = new ArrayList<>();
-		this.artists.add(artist);
+		this.artist = artist;
 	}
 
+	// Getters and setters
 	public Long getId() {
 		return id;
 	}
@@ -82,12 +65,12 @@ public class Artwork { // NOSONAR
 		this.yearCreated = yearCreated;
 	}
 
-	public List<Artist> getArtists() {
-		return artists;
+	public Artist getArtist() {
+		return artist;
 	}
 
-	public void setArtists(List<Artist> artists) {
-		this.artists = artists;
+	public void setArtist(Artist artist) {
+		this.artist = artist;
 	}
 
 	@Override
@@ -107,9 +90,7 @@ public class Artwork { // NOSONAR
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Artwork other = (Artwork) obj;
-		return Objects.equals(id, other.id)
-			&& Objects.equals(title, other.title)
-			&& Objects.equals(medium, other.medium)
-			&& yearCreated == other.yearCreated;
+		return Objects.equals(id, other.id) && Objects.equals(title, other.title)
+				&& Objects.equals(medium, other.medium) && yearCreated == other.yearCreated;
 	}
 }

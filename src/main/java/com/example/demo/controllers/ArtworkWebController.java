@@ -19,7 +19,7 @@ public class ArtworkWebController {
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ARTWORK_ATTRIBUTE = "artwork";
 	private static final String ARTWORKS_ATTRIBUTE = "artworks";
-	private static final String ARTISTS_ATTRIBUTE = "artists";
+	private static final String ARTISTS_ATTRIBUTE = "allArtists";
 
 	@Autowired
 	private ArtworkService artworkService;
@@ -60,6 +60,10 @@ public class ArtworkWebController {
 
 	@PostMapping("/save")
 	public String saveArtwork(@ModelAttribute(ARTWORK_ATTRIBUTE) Artwork artwork) {
+		if (artwork.getArtist() != null && artwork.getArtist().getId() != null) {
+			Artist realArtist = artistService.getArtistById(artwork.getArtist().getId());
+			artwork.setArtist(realArtist);
+		}
 		if (artwork.getId() == null) {
 			artworkService.insertNewArtwork(artwork);
 		} else {

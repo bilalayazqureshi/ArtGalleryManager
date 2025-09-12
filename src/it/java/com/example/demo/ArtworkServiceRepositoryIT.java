@@ -4,6 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import com.example.demo.model.Artist;
+import com.example.demo.model.Artwork;
+import com.example.demo.repositories.ArtworkRepository;
+import com.example.demo.repositories.ArtistRepository;
+import com.example.demo.service.ArtworkService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,10 +21,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.example.demo.model.Artwork;
-import com.example.demo.repositories.ArtworkRepository;
-import com.example.demo.service.ArtworkService;
 
 @Testcontainers
 @SpringBootTest
@@ -43,9 +46,25 @@ class ArtworkServiceRepositoryIT {
 	@Autowired
 	private ArtworkRepository artworkRepository;
 
+	@Autowired
+	private ArtistRepository artistRepository;
+
+	private Artist defaultArtist;
+
+	@BeforeEach
+	void setup() {
+		artworkRepository.deleteAll();
+		artistRepository.deleteAll();
+		artworkRepository.flush();
+		artistRepository.flush();
+
+		defaultArtist = artistRepository.save(new Artist(null, "Vincent Van Gogh", "Dutch"));
+	}
+
 	@Test
 	void testInsertNewArtwork() {
-		Artwork saved = artworkService.insertNewArtwork(new Artwork(null, "Starry Night", "Oil on Canvas", 1889));
+		Artwork saved = artworkService
+				.insertNewArtwork(new Artwork(null, "Starry Night", "Oil on Canvas", 1889, defaultArtist));
 		assertThat(saved.getId()).isNotNull();
 		assertThat(artworkRepository.findById(saved.getId())).isPresent();
 	}
@@ -54,8 +73,9 @@ class ArtworkServiceRepositoryIT {
 	void testGetAllArtworks() {
 		artworkRepository.deleteAll();
 
-		artworkService.insertNewArtwork(new Artwork(null, "Mona Lisa", "Oil on Canvas", 1503));
-		artworkService.insertNewArtwork(new Artwork(null, "The Persistence of Memory", "Oil on Canvas", 1931));
+		artworkService.insertNewArtwork(new Artwork(null, "Mona Lisa", "Oil on Canvas", 1503, defaultArtist));
+		artworkService
+				.insertNewArtwork(new Artwork(null, "The Persistence of Memory", "Oil on Canvas", 1931, defaultArtist));
 
 		List<Artwork> all = artworkService.getAllArtworks();
 		assertThat(all).hasSize(2).extracting(Artwork::getTitle).containsExactlyInAnyOrder("Mona Lisa",
@@ -64,22 +84,24 @@ class ArtworkServiceRepositoryIT {
 
 	@Test
 	void testUpdateArtworkById() {
-		Artwork original = artworkService.insertNewArtwork(new Artwork(null, "The Scream", "Oil on Canvas", 1893));
+		Artwork original = artworkService
+				.insertNewArtwork(new Artwork(null, "The Scream", "Oil on Canvas", 1893, defaultArtist));
 
-		
-		Artwork updatedArtwork = new Artwork(null, "The Scream", "Oil on Canvas", 1895);
-		updatedArtwork.setId(original.getId()); 
+		Artwork updatedArtwork = new Artwork(null, "The Scream", "Oil on Canvas", 1895, defaultArtist);
+		updatedArtwork.setId(original.getId());
 
 		Artwork updated = artworkService.updateArtworkById(original.getId(), updatedArtwork);
 
-		assertThat(updated.getYearCreated()).isEqualTo(1895); // Verify the updated year
+		assertThat(updated.getYearCreated()).isEqualTo(1895);
+
 		Artwork fromDb = artworkRepository.findById(original.getId()).orElseThrow();
-		assertThat(fromDb.getYearCreated()).isEqualTo(1895); 
+		assertThat(fromDb.getYearCreated()).isEqualTo(1895);
 	}
 
 	@Test
 	void testDeleteArtworkById() {
-		Artwork artwork = artworkService.insertNewArtwork(new Artwork(null, "Guernica", "Oil on Canvas", 1937));
+		Artwork artwork = artworkService
+				.insertNewArtwork(new Artwork(null, "Guernica", "Oil on Canvas", 1937, defaultArtist));
 
 		artworkService.deleteArtworkById(artwork.getId());
 

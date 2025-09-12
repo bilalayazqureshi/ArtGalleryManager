@@ -42,14 +42,15 @@ public class ArtistWebController {
 	public String editArtist(@PathVariable long id, Model model) {
 		Artist artist = artistService.getArtistById(id);
 		List<Artwork> artworks = artworkService.getAllArtworks();
-		
+
 		if (artist != null) {
 			model.addAttribute(ARTIST_ATTRIBUTE, artist);
 			model.addAttribute(MESSAGE_ATTRIBUTE, "");
 		} else {
+			model.addAttribute(ARTIST_ATTRIBUTE, new Artist());
 			model.addAttribute(MESSAGE_ATTRIBUTE, "No artist found with id: " + id);
 		}
-		
+
 		model.addAttribute("artworks", artworks);
 		return "edit_artist";
 	}
@@ -64,7 +65,8 @@ public class ArtistWebController {
 	}
 
 	@PostMapping("/save")
-	public String saveArtist(Artist artist, @RequestParam(value = "artworkIds", required = false) List<Long> artworkIds) {
+	public String saveArtist(Artist artist,
+			@RequestParam(value = "artworkIds", required = false) List<Long> artworkIds) {
 		if (artworkIds != null && !artworkIds.isEmpty()) {
 			List<Artwork> artworks = artworkService.getAllArtworksByIds(artworkIds);
 			artist.setArtworks(artworks);
