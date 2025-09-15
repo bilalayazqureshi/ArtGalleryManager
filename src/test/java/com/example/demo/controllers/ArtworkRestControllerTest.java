@@ -3,7 +3,6 @@ package com.example.demo.controllers;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,12 +91,12 @@ class ArtworkRestControllerTest {
 				""";
 
 		mvc.perform(put("/api/artworks/99").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-				.content(updateJson)).andExpect(status().isOk()).andExpect(content().string(""));
+				.content(updateJson)).andExpect(status().isNotFound());
 	}
 
 	@Test
 	void testDeleteArtwork() throws Exception {
-		doNothing().when(artworkService).deleteArtworkById(anyLong());
+		when(artworkService.deleteArtworkById(anyLong())).thenReturn(true);
 
 		mvc.perform(delete("/api/artworks/1")).andExpect(status().isOk()).andExpect(content().string(""));
 	}
@@ -119,5 +118,19 @@ class ArtworkRestControllerTest {
 
 		mvc.perform(get("/api/artworks/1")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1))
 				.andExpect(jsonPath("$.title").value("Art1")).andExpect(jsonPath("$.artist.name").value("Artist A"));
+	}
+
+	@Test
+	void testDeleteArtwork_NotFound() throws Exception {
+		when(artworkService.deleteArtworkById(anyLong())).thenReturn(false);
+
+		mvc.perform(delete("/api/artworks/99")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetArtworkById_NotFound() throws Exception {
+		when(artworkService.getArtworkById(99L)).thenReturn(null);
+
+		mvc.perform(get("/api/artworks/99")).andExpect(status().isNotFound());
 	}
 }

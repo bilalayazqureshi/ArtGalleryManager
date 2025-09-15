@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
 import com.example.demo.repositories.ArtistRepository;
 import com.example.demo.repositories.ArtworkRepository;
@@ -22,8 +21,7 @@ public class ArtworkService {
 	}
 
 	public Artwork getArtworkById(long id) {
-		Optional<Artwork> optionalArtwork = artworkRepository.findById(id);
-		return optionalArtwork.orElse(null);
+		return artworkRepository.findById(id).orElse(null);
 	}
 
 	public List<Artwork> getAllArtworksByIds(List<Long> ids) {
@@ -32,26 +30,33 @@ public class ArtworkService {
 
 	public Artwork insertNewArtwork(Artwork artwork) {
 		if (artwork.getArtist() != null && artwork.getArtist().getId() != null) {
-			Optional<Artist> artistOpt = artistRepository.findById(artwork.getArtist().getId());
-			artistOpt.ifPresent(artwork::setArtist);
+			artistRepository.findById(artwork.getArtist().getId()).ifPresent(artwork::setArtist);
 		}
 		return artworkRepository.save(artwork);
 	}
 
 	public Artwork updateArtworkById(long id, Artwork updatedArtwork) {
-		Optional<Artwork> existingArtwork = artworkRepository.findById(id);
-		if (existingArtwork.isPresent()) {
+		Optional<Artwork> existingOpt = artworkRepository.findById(id);
+		if (existingOpt.isPresent()) {
+			Artwork existing = existingOpt.get();
+			existing.setTitle(updatedArtwork.getTitle());
+			existing.setMedium(updatedArtwork.getMedium());
+			existing.setYearCreated(updatedArtwork.getYearCreated());
+
 			if (updatedArtwork.getArtist() != null && updatedArtwork.getArtist().getId() != null) {
-				Optional<Artist> artistOpt = artistRepository.findById(updatedArtwork.getArtist().getId());
-				artistOpt.ifPresent(updatedArtwork::setArtist);
+				artistRepository.findById(updatedArtwork.getArtist().getId()).ifPresent(existing::setArtist);
 			}
-			return artworkRepository.save(updatedArtwork);
+			return artworkRepository.save(existing);
 		}
 		return null;
 	}
 
-	public void deleteArtworkById(long id) {
-		artworkRepository.deleteById(id);
+	public boolean deleteArtworkById(long id) {
+		if (artworkRepository.existsById(id)) {
+			artworkRepository.deleteById(id);
+			return true;
+		}
+		return false;
 	}
 
 	public List<Artwork> getAllArtworks() {
