@@ -2,15 +2,8 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Artwork;
 import com.example.demo.service.ArtworkService;
@@ -19,8 +12,11 @@ import com.example.demo.service.ArtworkService;
 @RequestMapping("/api/artworks")
 public class ArtworkRestController {
 
-	@Autowired
-	private ArtworkService artworkService;
+	private final ArtworkService artworkService;
+
+	public ArtworkRestController(ArtworkService artworkService) {
+		this.artworkService = artworkService;
+	}
 
 	@GetMapping
 	public List<Artwork> allArtworks() {
@@ -28,22 +24,26 @@ public class ArtworkRestController {
 	}
 
 	@GetMapping("/{id}")
-	public Artwork getArtwork(@PathVariable long id) {
-		return artworkService.getArtworkById(id);
+	public ResponseEntity<Artwork> getArtwork(@PathVariable long id) {
+		Artwork artwork = artworkService.getArtworkById(id);
+		return (artwork == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(artwork);
 	}
 
 	@PostMapping("/new")
-	public Artwork create(@RequestBody Artwork artwork) {
-		return artworkService.insertNewArtwork(artwork);
+	public ResponseEntity<Artwork> create(@RequestBody Artwork artwork) {
+		Artwork created = artworkService.insertNewArtwork(artwork);
+		return ResponseEntity.ok(created);
 	}
 
 	@PutMapping("/{id}")
-	public Artwork update(@PathVariable long id, @RequestBody Artwork replacement) {
-		return artworkService.updateArtworkById(id, replacement);
+	public ResponseEntity<Artwork> update(@PathVariable long id, @RequestBody Artwork replacement) {
+		Artwork updated = artworkService.updateArtworkById(id, replacement);
+		return (updated == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
 	}
 
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
-		artworkService.deleteArtworkById(id);
+	public ResponseEntity<Void> delete(@PathVariable long id) {
+		boolean deleted = artworkService.deleteArtworkById(id);
+		return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
 	}
 }

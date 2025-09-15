@@ -19,6 +19,9 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<skip.unit-tests>false</skip.unit-tests>
+		<skip.integration-tests>false</skip.integration-tests>
+		<skip.Pitest>false</skip.Pitest>
 		<sonar.coverage.jacoco.xmlReportPaths>
 			${project.reporting.outputDirectory}/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.junit.reportPaths>
@@ -141,6 +144,34 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.4.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -202,6 +233,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M5</version>
 				<configuration>
+					<skipTests>${skip.unit-tests}</skipTests>
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
@@ -216,6 +248,7 @@
 				<executions>
 					<execution>
 						<configuration>
+							<skipTests>${skip.integration-tests}</skipTests>
 							<includes>
 								<include>**/*ApplicationTests.java</include>
 								<include>**/*IT.java</include>
@@ -243,6 +276,7 @@
 						<configuration>
 							<sources>
 								<source>src/it/java</source>
+								<source>src/e2e/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -287,8 +321,6 @@
 
 		<pluginManagement>
 			<plugins>
-
-				
 
 
 				<plugin>
@@ -354,6 +386,126 @@
 						<configuration>
 							<argLine>${surefireArgLine}</argLine>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>e2e-tests</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<properties>
+				<skip.unit-tests>true</skip.unit-tests>
+				<skip.integration-tests>true</skip.integration-tests>
+				<skipPitest>true</skipPitest>
+				<jacoco.skip>true</jacoco.skip>
+			</properties>
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.38.1</version>
+						<executions>
+							<execution>
+								<id>start-mysql</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop-mysql</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<useColor>false</useColor>
+
+
+							<skipExtendedAuth>true</skipExtendedAuth>
+
+							<images>
+								<image>
+									<name>mysql:8.0</name>
+									<alias>mysql-artgallery</alias>
+									<run>
+										<env>
+											<MYSQL_DATABASE>artgallery</MYSQL_DATABASE>
+											<MYSQL_USER>art</MYSQL_USER>
+											<MYSQL_PASSWORD>pass</MYSQL_PASSWORD>
+											<MYSQL_ROOT_PASSWORD>secret</MYSQL_ROOT_PASSWORD>
+										</env>
+										<ports>
+											<port>3307:3306</port>
+										</ports>
+										<wait>
+											<log>ready for connections</log>
+											<time>180000</time>
+											<shutdown>5000</shutdown>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</plugin>
+
+
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pre-integration-test</id>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<wait>20000</wait>
+									<maxAttempts>10</maxAttempts>
+									<arguments>
+										<argument>--server.port=8080</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>e2e-tests</id>
+								<configuration>
+									<includes>
+										<include>**/*E2E.java</include>
+									</includes>
+									<excludes>
+										<exclude>**/*IT.java</exclude>
+									</excludes>
+								</configuration>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

@@ -3,7 +3,6 @@ package com.example.demo.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -115,7 +114,7 @@ class ArtworkWebControllerHtmlUnitTest {
 
 	@Test
 	void testDeleteArtwork_ShouldDisplayConfirmationMessage() throws Exception {
-		doNothing().when(artworkService).deleteArtworkById(3L);
+		when(artworkService.deleteArtworkById(3L)).thenReturn(true);
 
 		HtmlPage page = webClient.getPage("/artworks/delete/3");
 
