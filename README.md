@@ -7,7 +7,6 @@ A Spring Boot web application for managing artists and artworks, featuring Test 
 [![Coverage Status](https://coveralls.io/repos/github/bilalayazqureshi/ArtGalleryManager/badge.svg?branch=master)](https://coveralls.io/github/bilalayazqureshi/ArtGalleryManager?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=bugs)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=coverage)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalayazqureshi_ArtGalleryManager&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=bilalayazqureshi_ArtGalleryManager)
