@@ -87,6 +87,7 @@ class ArtworkWebE2E {
 		assertThat(conf).contains("Artwork with ID");
 
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.name("btn_all_artworks"))).click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("artwork_table")));
 
 		String afterDelete = driver.findElement(By.tagName("body")).getText();
 		assertThat(afterDelete).doesNotContain(title);
