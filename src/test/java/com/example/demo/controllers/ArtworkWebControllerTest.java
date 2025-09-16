@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.demo.model.Artist;
 import com.example.demo.model.Artwork;
 import com.example.demo.service.ArtistService;
 import com.example.demo.service.ArtworkService;
@@ -91,11 +92,18 @@ class ArtworkWebControllerTest {
 	}
 
 	@Test
-	void test_PostArtworkWithoutId_ShouldInsertNewArtwork() throws Exception {
-		mvc.perform(post("/artworks/save").param("title", "A3").param("medium", "Oil").param("yearCreated", "2025"))
+	void test_PostArtworkWithArtistId_ShouldLookupAndSetArtist() throws Exception {
+		Artist artist = new Artist(10L, "Leonardo", "Italian");
+		when(artistService.getArtistById(10L)).thenReturn(artist);
+
+
+		mvc.perform(post("/artworks/save").param("title", "With Artist").param("medium", "Oil")
+				.param("yearCreated", "1500").param("artist.id", "10"))
 				.andExpect(view().name("redirect:/artworks"));
 
-		verify(artworkService).insertNewArtwork(new Artwork(null, "A3", "Oil", 2025, null));
+		verify(artistService).getArtistById(10L);
+		verify(artworkService).insertNewArtwork(new Artwork(null, "With Artist", "Oil", 1500, artist));
+	
 	}
 
 	@Test
