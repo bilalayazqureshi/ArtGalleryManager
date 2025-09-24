@@ -2,7 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +20,14 @@ import com.example.demo.service.ArtworkService;
 @RequestMapping("/artists")
 public class ArtistWebController {
 
-	@Autowired
-	private ArtistService artistService;
-
-	@Autowired
-	private ArtworkService artworkService;
+	
+	private final ArtistService artistService;
+	private final ArtworkService artworkService;
+	
+	public ArtistWebController(ArtistService artistService, ArtworkService artworkService) {
+		this.artistService = artistService;
+		this.artworkService = artworkService;
+	}
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ARTIST_ATTRIBUTE = "artist";
@@ -35,7 +38,7 @@ public class ArtistWebController {
 		List<Artist> allArtists = artistService.getAllArtists();
 		model.addAttribute(ARTISTS_ATTRIBUTE, allArtists);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allArtists.isEmpty() ? "No artist" : "");
-		return "artist";
+		return ARTIST_ATTRIBUTE;
 	}
 
 	@GetMapping("/edit/{id}")

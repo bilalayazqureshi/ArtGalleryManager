@@ -18,22 +18,24 @@ import org.htmlunit.html.HtmlTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.demo.model.Artist;
 import com.example.demo.service.ArtistService;
 import com.example.demo.service.ArtworkService;
 
 @WebMvcTest(controllers = ArtistWebController.class)
+@Import(ArtistWebController.class)
 class ArtistWebControllerHtmlUnitTest {
 
 	@Autowired
 	private WebClient webClient;
 
-	@MockBean
+	@MockitoBean
 	private ArtistService artistService;
 
-	@MockBean
+	@MockitoBean
 	private ArtworkService artworkService;
 
 	@Test
@@ -70,8 +72,10 @@ class ArtistWebControllerHtmlUnitTest {
 		HtmlTable table = page.getHtmlElementById("artist_table");
 		String normalized = removeWindowsCR(table.asNormalizedText());
 
-		assertThat(normalized).isEqualTo("ID\tName\tNationality\tEdit\tDelete\n" + "1\tPicasso\tSpanish\tEdit\tDelete\n"
-				+ "2\tDa Vinci\tItalian\tEdit\tDelete");
+		assertThat(normalized).isEqualTo("""
+				ID\tName\tNationality\tEdit\tDelete
+				1\tPicasso\tSpanish\tEdit\tDelete
+				2\tDa Vinci\tItalian\tEdit\tDelete""");
 
 		page.getAnchorByHref("/artists/edit/1");
 		page.getAnchorByHref("/artists/edit/2");

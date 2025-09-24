@@ -2,7 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +21,21 @@ public class ArtworkWebController {
 	private static final String ARTWORKS_ATTRIBUTE = "artworks";
 	private static final String ARTISTS_ATTRIBUTE = "allArtists";
 
-	@Autowired
-	private ArtworkService artworkService;
 
-	@Autowired
+	private ArtworkService artworkService;
 	private ArtistService artistService;
+	
+	public ArtworkWebController(ArtworkService artworkService, ArtistService artistService) {
+		this.artworkService = artworkService;
+		this.artistService = artistService;
+	}
 
 	@GetMapping
 	public String listArtworks(Model model) {
 		List<Artwork> allArtworks = artworkService.getAllArtworks();
 		model.addAttribute(ARTWORKS_ATTRIBUTE, allArtworks);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allArtworks.isEmpty() ? "No artwork" : "");
-		return "artwork";
+		return ARTWORK_ATTRIBUTE;
 	}
 
 	@GetMapping("/edit/{id}")

@@ -2,7 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +19,11 @@ import com.example.demo.service.ArtistService;
 @RequestMapping("/api/artists")
 public class ArtistRestController {
 
-	@Autowired
-	private ArtistService artistService;
+	private final ArtistService artistService;
+
+	public ArtistRestController(ArtistService artistService) {
+		this.artistService = artistService;
+	}
 
 	@GetMapping
 	public List<Artist> allArtists() {

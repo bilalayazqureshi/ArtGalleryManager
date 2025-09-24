@@ -25,13 +25,13 @@ class ArtistServiceTest {
 	private ArtistService artistService;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		artistService = new ArtistService(artistRepository);
 	}
 
 	@Test
-	public void testGetArtistById() {
+	void testGetArtistById() {
 		Artist artist = new Artist(1L, "Leonardo da Vinci", "Italian");
 		when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 
@@ -44,7 +44,7 @@ class ArtistServiceTest {
 	}
 
 	@Test
-	public void testGetArtistByIdNotFound() {
+	void testGetArtistByIdNotFound() {
 		when(artistRepository.findById(1L)).thenReturn(Optional.empty());
 
 		Artist result = artistService.getArtistById(1L);
@@ -54,7 +54,7 @@ class ArtistServiceTest {
 	}
 
 	@Test
-	public void testInsertNewArtist() {
+	void testInsertNewArtist() {
 		Artist artist = new Artist(null, "Van Gogh", "Dutch");
 		Artist savedArtist = new Artist(1L, "Van Gogh", "Dutch");
 
@@ -69,7 +69,7 @@ class ArtistServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtist() {
+	void testUpdateArtist() {
 		Artist existing = new Artist(1L, "Van Gogh", "Dutch");
 		Artist updated = new Artist(1L, "Van Gogh Updated", "Netherlands");
 
@@ -85,7 +85,7 @@ class ArtistServiceTest {
 	}
 
 	@Test
-	public void testDeleteArtist() {
+	void testDeleteArtist() {
 		long id = 1L;
 		doNothing().when(artistRepository).deleteById(id);
 
@@ -95,7 +95,7 @@ class ArtistServiceTest {
 	}
 
 	@Test
-	public void testGetAllArtists() {
+	void testGetAllArtists() {
 		Artist a1 = new Artist(1L, "Leonardo", "Italian");
 		Artist a2 = new Artist(2L, "Rembrandt", "Dutch");
 

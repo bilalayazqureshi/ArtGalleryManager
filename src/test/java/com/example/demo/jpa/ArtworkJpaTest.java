@@ -30,6 +30,6 @@ class ArtworkJpaTest {
 		assertThat(saved.getId()).isNotNull();
 		assertThat(saved.getId()).isPositive();
 
-		LoggerFactory.getLogger(ArtworkJpaTest.class).info("Saved: " + saved);
+		LoggerFactory.getLogger(ArtworkJpaTest.class).info("Saved: {}", saved);
 	}
 }
