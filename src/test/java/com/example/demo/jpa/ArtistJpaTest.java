@@ -23,6 +23,6 @@ class ArtistJpaTest {
 		assertThat(saved.getNationality()).isEqualTo("Spanish");
 		assertThat(saved.getId()).isNotNull();
 		assertThat(saved.getId()).isPositive();
-		LoggerFactory.getLogger(ArtistJpaTest.class).info("Saved: " + saved.toString());
+		LoggerFactory.getLogger(ArtistJpaTest.class).info("Saved: {}", saved);
 	}
 }

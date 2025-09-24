@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 public class Artist {
@@ -18,7 +19,7 @@ public class Artist {
 	private String nationality;
 
 	@OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties("artist")
+	@JsonIgnore
 	private List<Artwork> artworks = new ArrayList<>();
 
 	public Artist() {

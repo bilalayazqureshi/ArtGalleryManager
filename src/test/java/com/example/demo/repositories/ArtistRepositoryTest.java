@@ -23,7 +23,7 @@ class ArtistRepositoryTest {
 	private TestEntityManager entityManager;
 
 	@Test
-	public void firstLearningTest() {
+	void firstLearningTest() {
 		Artist artist = new Artist(null, "test", "Spanish");
 		Artist saved = repository.save(artist);
 		Collection<Artist> artists = repository.findAll();
@@ -31,7 +31,7 @@ class ArtistRepositoryTest {
 	}
 
 	@Test
-	public void secondLearningTest() {
+	void secondLearningTest() {
 		Artist artist = new Artist(null, "test", "Spanish");
 		Artist saved = entityManager.persistFlushFind(artist);
 		Collection<Artist> artists = repository.findAll();
@@ -39,14 +39,14 @@ class ArtistRepositoryTest {
 	}
 
 	@Test
-	public void test_findByName() {
+	void test_findByName() {
 		Artist saved = entityManager.persistFlushFind(new Artist(null, "test", "Spanish"));
 		Artist found = repository.findByName("test");
 		assertThat(found).isEqualTo(saved);
 	}
 
 	@Test
-	public void test_findByNameAndNationality() {
+	void test_findByNameAndNationality() {
 		entityManager.persistFlushFind(new Artist(null, "test", "Italian"));
 		Artist a = entityManager.persistFlushFind(new Artist(null, "test", "Spanish"));
 		List<Artist> found = repository.findByNameAndNationality("test", "Spanish");
@@ -54,7 +54,7 @@ class ArtistRepositoryTest {
 	}
 
 	@Test
-	public void test_findByNameOrNationality() {
+	void test_findByNameOrNationality() {
 		Artist a1 = entityManager.persistFlushFind(new Artist(null, "test", "French"));
 		Artist a2 = entityManager.persistFlushFind(new Artist(null, "another", "Spanish"));
 		entityManager.persistFlushFind(new Artist(null, "noMatch", "German"));
@@ -63,7 +63,7 @@ class ArtistRepositoryTest {
 	}
 
 	@Test
-	public void test_findByNationalityEndingWith() {
+	void test_findByNationalityEndingWith() {
 		entityManager.persistFlushFind(new Artist(null, "test", "French"));
 		Artist a2 = entityManager.persistFlushFind(new Artist(null, "another", "Spanish"));
 		entityManager.persistFlushFind(new Artist(null, "no", "German"));

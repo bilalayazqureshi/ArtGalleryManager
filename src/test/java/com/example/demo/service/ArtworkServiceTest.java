@@ -27,13 +27,13 @@ class ArtworkServiceTest {
 	private ArtworkService artworkService;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		artworkService = new ArtworkService(artworkRepository, artistRepository);
 	}
 
 	@Test
-	public void testGetArtworkById() {
+	void testGetArtworkById() {
 		Artist artist = new Artist(1L, "Da Vinci", "Italian");
 		Artwork artwork = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
 		when(artworkRepository.findById(1L)).thenReturn(Optional.of(artwork));
@@ -48,7 +48,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testGetArtworkByIdNotFound() {
+	void testGetArtworkByIdNotFound() {
 		when(artworkRepository.findById(1L)).thenReturn(Optional.empty());
 
 		Artwork result = artworkService.getArtworkById(1L);
@@ -58,7 +58,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testInsertNewArtwork() {
+	void testInsertNewArtwork() {
 		Artist artist = new Artist(2L, "Van Gogh", "Dutch");
 		Artwork artwork = new Artwork(null, "Starry Night", "Oil on canvas", 1889, artist);
 		Artwork savedArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
@@ -75,7 +75,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtwork() {
+	void testUpdateArtwork() {
 		Artist artist = new Artist(3L, "Rembrandt", "Dutch");
 		Artwork existingArtwork = new Artwork(1L, "Starry Night", "Oil on canvas", 1889, artist);
 		Artwork updatedArtwork = new Artwork(1L, "Starry Night Updated", "Oil on canvas", 1890, artist);
@@ -92,7 +92,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testDeleteArtwork() {
+	void testDeleteArtwork() {
 		long id = 1L;
 		when(artworkRepository.existsById(id)).thenReturn(true); // ✅ simulate entity exists
 		doNothing().when(artworkRepository).deleteById(id);
@@ -104,7 +104,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testDeleteArtwork_whenNotFound_returnsFalse() {
+	void testDeleteArtwork_whenNotFound_returnsFalse() {
 		long id = 99L;
 		when(artworkRepository.existsById(id)).thenReturn(false); // ✅ nothing exists
 
@@ -115,7 +115,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testGetAllArtworks() {
+	void testGetAllArtworks() {
 		Artist artist = new Artist(4L, "Michelangelo", "Italian");
 		Artwork artwork1 = new Artwork(1L, "Mona Lisa", "Oil", 1503, artist);
 		Artwork artwork2 = new Artwork(2L, "Starry Night", "Oil on canvas", 1889, artist);
@@ -130,7 +130,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtwork_whenNotFound_returnsNull() {
+	void testUpdateArtwork_whenNotFound_returnsNull() {
 		long nonExistentId = 999L;
 		Artwork updatedArtwork = new Artwork(nonExistentId, "Imaginary", "Mixed", 2025, new Artist());
 
@@ -143,7 +143,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testInsertNewArtwork_whenArtistIsNull() {
+	void testInsertNewArtwork_whenArtistIsNull() {
 		Artwork artwork = new Artwork(null, "Untitled", "Digital", 2021, null);
 		Artwork savedArtwork = new Artwork(1L, "Untitled", "Digital", 2021, null);
 
@@ -159,7 +159,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testInsertNewArtwork_whenArtistIdIsNull() {
+	void testInsertNewArtwork_whenArtistIdIsNull() {
 		Artist artist = new Artist(null, "Unknown", "Nowhere");
 		Artwork artwork = new Artwork(null, "Lost Artwork", "Oil", 2020, artist);
 		Artwork savedArtwork = new Artwork(1L, "Lost Artwork", "Oil", 2020, artist);
@@ -175,7 +175,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testInsertNewArtwork_whenArtistNotFound_setsNullArtist() {
+	void testInsertNewArtwork_whenArtistNotFound_setsNullArtist() {
 		Artist artist = new Artist(99L, "Ghost", "Hidden");
 		Artwork artwork = new Artwork(null, "Mystery", "Mixed", 1999, artist);
 		Artwork savedArtwork = new Artwork(1L, "Mystery", "Mixed", 1999, artist);
@@ -193,7 +193,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtwork_whenArtistIsNull() {
+	void testUpdateArtwork_whenArtistIsNull() {
 		long id = 5L;
 		Artist existingArtist = new Artist(5L, "Dali", "Spanish");
 		Artwork existingArtwork = new Artwork(id, "Dream", "Surrealism", 1931, existingArtist);
@@ -212,7 +212,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtwork_whenArtistIdIsNull() {
+	void testUpdateArtwork_whenArtistIdIsNull() {
 		long id = 6L;
 		Artist existingArtist = new Artist(6L, "Matisse", "French");
 		Artwork existingArtwork = new Artwork(id, "Harmony", "Oil", 1905, existingArtist);
@@ -231,7 +231,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testUpdateArtwork_whenArtistNotFound() {
+	void testUpdateArtwork_whenArtistNotFound() {
 		long id = 7L;
 		Artist existingArtist = new Artist(7L, "Rodin", "French");
 		Artwork existingArtwork = new Artwork(id, "The Thinker", "Bronze", 1902, existingArtist);
@@ -251,7 +251,7 @@ class ArtworkServiceTest {
 	}
 
 	@Test
-	public void testGetAllArtworksByIds() {
+	void testGetAllArtworksByIds() {
 		Artist artist = new Artist(1L, "Test Artist", "Testland");
 		Artwork artwork1 = new Artwork(1L, "Art1", "Oil", 2000, artist);
 		Artwork artwork2 = new Artwork(2L, "Art2", "Ink", 2001, artist);
