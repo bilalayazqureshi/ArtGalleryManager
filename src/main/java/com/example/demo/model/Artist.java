@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
+@SuppressWarnings("javaarchitecture:S7027")
 public class Artist {
 
 	@Id

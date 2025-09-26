@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@SuppressWarnings("javaarchitecture:S7027")
 public class Artwork {
 
 	@Id

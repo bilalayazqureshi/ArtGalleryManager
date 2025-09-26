@@ -410,7 +410,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.38.1</version>
+						<version>0.43.4 </version>
 						<executions>
 							<execution>
 								<id>start-mysql</id>
@@ -429,10 +429,6 @@
 						</executions>
 						<configuration>
 							<useColor>false</useColor>
-
-
-							<skipExtendedAuth>true</skipExtendedAuth>
-
 							<images>
 								<image>
 									<name>mysql:8.0</name>
@@ -474,6 +470,7 @@
 									<arguments>
 										<argument>--server.port=8080</argument>
 									</arguments>
+									<jmxPort>9010</jmxPort>
 								</configuration>
 							</execution>
 							<execution>
@@ -483,6 +480,7 @@
 								</goals>
 							</execution>
 						</executions>
+						
 					</plugin>
 
 

@@ -94,7 +94,7 @@ class ArtworkServiceTest {
 	@Test
 	void testDeleteArtwork() {
 		long id = 1L;
-		when(artworkRepository.existsById(id)).thenReturn(true); // ✅ simulate entity exists
+		when(artworkRepository.existsById(id)).thenReturn(true);
 		doNothing().when(artworkRepository).deleteById(id);
 
 		boolean result = artworkService.deleteArtworkById(id);
@@ -106,11 +106,11 @@ class ArtworkServiceTest {
 	@Test
 	void testDeleteArtwork_whenNotFound_returnsFalse() {
 		long id = 99L;
-		when(artworkRepository.existsById(id)).thenReturn(false); // ✅ nothing exists
+		when(artworkRepository.existsById(id)).thenReturn(false);
 
 		boolean result = artworkService.deleteArtworkById(id);
 
-		assertEquals(false, result); // ✅ returns false
+		assertEquals(false, result);
 		verify(artworkRepository, never()).deleteById(anyLong());
 	}
 
@@ -201,7 +201,6 @@ class ArtworkServiceTest {
 
 		when(artworkRepository.findById(id)).thenReturn(Optional.of(existingArtwork));
 		when(artworkRepository.save(existingArtwork)).thenReturn(existingArtwork);
-		;
 
 		Artwork result = artworkService.updateArtworkById(id, updatedArtwork);
 
